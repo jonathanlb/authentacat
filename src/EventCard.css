@@ -1,0 +1,14 @@
+.EventCard {
+  border-color: grey;
+  border-style: solid;
+  border-width: 1px;
+  margin: 3%;
+  padding: 2%;
+}
+
+.EventDescriptionDiv {
+  padding-left: 5%;
+  padding-right: 5%;
+  padding-top: 0%;
+  text-align: left;
+}
