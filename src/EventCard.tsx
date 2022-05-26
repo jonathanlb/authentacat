@@ -25,7 +25,7 @@ export function EventCard(props: EventCardProps) {
     <Card className="EventCard" raised={true}>
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-          <Typography variant="h2" color="text.primary">
+          <Typography variant="h3" color="text.primary">
             { props.name }
           </Typography>
         </AccordionSummary>

@@ -82,37 +82,40 @@ function App() {
   }
 
   return (
-    <Card className="App">
-      <Authenticator>
-        <Box className="AppHeader">
-          <Typography variant="h2">{siteTitle}</Typography>
-          <TextField className="AppHeaderFilter"
-            aria-label="filter events by name or venue"
-            label={<Search />}
-            id="eventFilterText"
-            onChange={e => updateCardVisibility(e.target.value)} />
-          <Button className="AppHeaderButton" aria-label="logout button"><Logout/></Button>
-        </Box>
-        { eventConfigs.map((eventConfig: EventCardProps, i: number) =>
-              <Box sx={{
-                visibility: "visible",
-                opacity: 1,
-                transition: "visibility 0.3s linear,opacity 0.3s linear"
-                }}
-                id={`eventCard_${i}`}
-                key={eventConfig.name} >
-              <EventCard
-                key={eventConfig.name}
-                name={eventConfig.name}
-                descriptionMd={eventConfig.descriptionMd}
-                venue={eventConfig.venue}
-                dateTimes={eventConfig.dateTimes}
-              />
-              </Box>
-            )
-        }
-      </Authenticator>
-    </Card>
+    <Authenticator>
+      {({ signOut, user }) => (
+        <Card className="App">
+          <Box className="AppHeader">
+            <img src="logo.png" />
+            <Typography className="UserNameNotice">Welcome, { user?.attributes?.name } </Typography>
+            <TextField className="AppHeaderFilter"
+              aria-label="filter events by name or venue"
+              label={<Search />}
+              id="eventFilterText"
+              onChange={e => updateCardVisibility(e.target.value)} />
+            <Button className="AppHeaderButton" aria-label="logout button" onClick={signOut}><Logout/></Button>
+          </Box>
+          { eventConfigs.map((eventConfig: EventCardProps, i: number) =>
+                <Box sx={{
+                  visibility: "visible",
+                  opacity: 1,
+                  transition: "visibility 0.3s linear,opacity 0.3s linear"
+                  }}
+                  id={`eventCard_${i}`}
+                  key={eventConfig.name} >
+                <EventCard
+                  key={eventConfig.name}
+                  name={eventConfig.name}
+                  descriptionMd={eventConfig.descriptionMd}
+                  venue={eventConfig.venue}
+                  dateTimes={eventConfig.dateTimes}
+                />
+                </Box>
+              )
+          }
+        </Card>
+      )}
+    </Authenticator>
   );
 }
 
