@@ -1,0 +1,17 @@
+.InterestReportCard {
+  background-color: white;
+  position: relative;
+  width: 90%;
+  left: 0px;
+  top: 0px;
+  display: inline-block;
+  text-align: left;
+  margin: 2%;
+  padding: 2%;
+}
+
+.CloseButton {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}

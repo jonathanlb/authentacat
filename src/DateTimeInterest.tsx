@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import ThumbDown from '@mui/icons-material/ThumbDown';
@@ -79,30 +80,37 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
   const [ rsvp, setRsvp ] = useState(props.rsvp);
   const [ rsvpCount, setCount ] = useState(props.rsvpCount);
 
-  function handleSlider(e: Event) {
-    const me = e as any;
+  function handleSlider(e: Event | number) {
+    let newValue = 0;
+    if (typeof e === 'number') {
+      newValue = e;
+    } else {
+      const me = e as any;
       if (me.target != null) {
-      const newValue = me.target.value;
-      if (newValue !== rsvp) {
-        const tmpCount = Object.assign({}, rsvpCount);
-        if (rsvp > 0) {
-          tmpCount.yes -= 1;
-        } else if (rsvp < 0) {
-          tmpCount.no -= 1;
-        } else {
-          tmpCount.maybe -= 1;
-        }
-
-        if (newValue > 0) {
-          tmpCount.yes += 1;
-        } else if (newValue < 0) {
-          tmpCount.no += 1;
-        } else {
-          tmpCount.maybe += 1;
-        }
-        setRsvp(newValue);
-        setCount(tmpCount);
+        newValue = me.target.value;
+      } else {
+        return;
       }
+    }
+    if (newValue !== rsvp) {
+      const tmpCount = Object.assign({}, rsvpCount);
+      if (rsvp > 0) {
+        tmpCount.yes -= 1;
+      } else if (rsvp < 0) {
+        tmpCount.no -= 1;
+      } else {
+        tmpCount.maybe -= 1;
+      }
+
+      if (newValue > 0) {
+        tmpCount.yes += 1;
+      } else if (newValue < 0) {
+        tmpCount.no += 1;
+      } else {
+        tmpCount.maybe += 1;
+      }
+      setRsvp(newValue);
+      setCount(tmpCount);
     }
   }
 
@@ -116,15 +124,20 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
         sx={{width: "50%"}} >
         { formattedDateTime }
       </Typography>
-      <ThumbDown/>
+      <Tooltip title="no">
+        <ThumbDown onClick={e => handleSlider(-1)} />
+      </Tooltip>
       <Box sx={{width: "25%", marginLeft: "1%", marginRight: "1%"}}>
         <Slider
           aria-label="RSVP"
           defaultValue={ props.rsvp }
+          value={ rsvp }
           min={-1} max={1} step={1} 
           onChange={handleSlider}/>
       </Box>
-      <ThumbUp/>
+      <Tooltip title="yes">
+        <ThumbUp onClick={e => handleSlider(1)} />
+      </Tooltip>
       <Box sx={{ width: "25%" }}>
         <InterestIndicator 
           aria-label={`Interest for ${formattedDateTime}`}

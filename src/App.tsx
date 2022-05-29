@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import Logout from '@mui/icons-material/Logout';
@@ -13,7 +14,6 @@ import Search from '@mui/icons-material/Search';
 
 import { EventCard, EventCardProps } from './EventCard';
 
-const siteTitle = 'Minnesota Mandolin Orchestra';
 const venue = {
   name: 'Bob\'s Big Tent',
   address: '1234 Some Place, Anytown'
@@ -86,14 +86,22 @@ function App() {
       {({ signOut, user }) => (
         <Card className="App">
           <Box className="AppHeader">
-            <img src="logo.png" />
+            <a href="https://mnmando.org">
+              <img src="logo.png" />
+            </a>
+
             <Typography className="UserNameNotice">Welcome, { user?.attributes?.name } </Typography>
-            <TextField className="AppHeaderFilter"
-              aria-label="filter events by name or venue"
-              label={<Search />}
-              id="eventFilterText"
-              onChange={e => updateCardVisibility(e.target.value)} />
-            <Button className="AppHeaderButton" aria-label="logout button" onClick={signOut}><Logout/></Button>
+            <Tooltip title="Filter events">
+              <TextField className="AppHeaderFilter"
+                aria-label="filter events by name or venue"
+                label={<Search />}
+                id="eventFilterText"
+                onChange={e => updateCardVisibility(e.target.value)} />
+            </Tooltip>
+
+            <Tooltip title="Logout">
+              <Button className="AppHeaderButton" aria-label="logout button" onClick={signOut}><Logout/></Button>
+            </Tooltip>
           </Box>
           { eventConfigs.map((eventConfig: EventCardProps, i: number) =>
                 <Box sx={{
