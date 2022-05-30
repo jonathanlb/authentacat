@@ -33,7 +33,13 @@ export function SectionRollCallTab(props: SectionRollCallTabProps) {
   return(
     <Box>
       <Card raised={true}>
-        <Tabs aria-label="summarize interest section" onChange={handleTabChange} value={activeTab}>
+        <Tabs 
+          aria-label="summarize interest section" 
+          onChange={handleTabChange} 
+          scrollButtons="auto"
+          value={activeTab}
+          variant="scrollable"
+        >
           { Array.from(section2rsvps.keys()).map(section => (
               <Tab key={section} label={section} aria-label={`${section} roll call`} />
             ))
