@@ -3,8 +3,6 @@ import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Tooltip from '@mui/material/Tooltip';
@@ -15,39 +13,16 @@ import Close from '@mui/icons-material/Close';
 import './InterestReport.css';
 
 import { InterestResponse } from './aggregate';
+import { RollCallTab } from './RollCallTab';
+import { SectionRollCallTab } from './SectionRollCallTab';
 import { SectionTotalsTab } from './SectionTotalsTab';
+import { TabPanel, TabPanelProps } from './TabBoiler';
 
 export type InterestReportProps = {
   time: string;
   hideF: () => void;
   getResponsesP: Promise<Array<InterestResponse>>;
 };
-
-export type TabPanelProps = {
-  children?: React.ReactNode;
-  value: number;
-  index: number;
-}
-
-export function TabPanel(props: TabPanelProps) {
-  const { children, value, index, ...other } = props;
-
-  return(
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box sx={{ p: 3 }}>
-          {children}
-        </Box>
-      )}
-    </div>
-  );
-}
 
 export function InterestReport(props: InterestReportProps) {
   const [activeTab, setActiveTab] = useState(0);
@@ -58,9 +33,6 @@ export function InterestReport(props: InterestReportProps) {
   }
 
   props.getResponsesP.then(setRsvps);
-  const affirmatives = rsvps.filter(r => r.rsvp > 0);
-  const maybes = rsvps.filter(r => r.rsvp === 0);
-  const negatives = rsvps.filter(r => r.rsvp < 0);
 
   return(
     <Card className="InterestReportCard" raised={true}>
@@ -86,37 +58,11 @@ export function InterestReport(props: InterestReportProps) {
       </Card>
 
           <TabPanel value={activeTab} index={0}>
-            <Typography variant="h6">Affirmative ({affirmatives.length})</Typography>
-            <List>
-              { affirmatives.map((rsvp, i) => (
-                  <ListItem key={i}>
-                    { rsvp.name } ({ rsvp.section })
-                  </ListItem>
-                ))
-              }
-            </List>
-            <Typography variant="h6">Maybe ({maybes.length})</Typography>
-            <List>
-              { maybes.map((rsvp, i) => (
-                  <ListItem key={i}>
-                    { rsvp.name } ({ rsvp.section })
-                  </ListItem>
-                ))
-              }
-            </List>
-            <Typography variant="h6">Negative ({negatives.length})</Typography>
-            <List>
-              { negatives.map((rsvp, i) => (
-                  <ListItem key={i}>
-                    { rsvp.name } ({ rsvp.section })
-                  </ListItem>
-                ))
-              }
-            </List>
+            <RollCallTab rsvps={rsvps} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={1}>
-            Fill in later
+            <SectionRollCallTab rsvps={rsvps} />
           </TabPanel>
 
           <TabPanel value={activeTab} index={2}>

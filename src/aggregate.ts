@@ -11,6 +11,7 @@ export type SectionResponse = {
   negatives: number;
 };
 
+// misnamed, not group by, but tally by section
 export function groupBySection(rsvps: Array<InterestResponse>): Array<SectionResponse> {
   function initSection(section: string): SectionResponse { 
     return {
