@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-import { groupBySection, InterestResponse } from './aggregate';
+import { tallyBySection, InterestResponse } from './aggregate';
 import { InterestIndicator } from './InterestIndicator';
 
 export type SectionTotalsTabProps = {
@@ -26,7 +26,7 @@ export function SectionTotalsTab(props: SectionTotalsTabProps) {
           </TableRow>
         </TableHead>
         <TableBody>
-          { groupBySection(props.rsvps).map((row, i) => (
+          { tallyBySection(props.rsvps).map((row, i) => (
             <TableRow key={i}>
               <TableCell>
                 {row.section} ({row.affirmatives+row.maybes+row.negatives})
