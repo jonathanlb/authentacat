@@ -1,4 +1,33 @@
-import { tallyBySection } from './aggregate';
+import { groupBy, tallyBySection } from './aggregate';
+
+test('groups empty list', () => {
+  expect(groupBy([], 'some-key')).toEqual(new Map());
+});
+
+
+test('groups by a key', () => {
+  const lst = [
+    {
+      key: 'a',
+      value: 1,
+    },
+    {
+      key: 'a',
+      value: 2,
+    },
+    {
+      key: 'b',
+      value: 3,
+    },
+  ];
+
+  expect(groupBy(lst, 'key')).
+    toEqual(new Map([
+      ['a', [ { key: 'a', value: 1 }, { key: 'a', value: 2 }]],
+      ['b', [ { key: 'b', value: 3 }]],
+    ]));
+});
+
 
 test('tallies empty responses', () => {
   expect(tallyBySection([])).toEqual([]);

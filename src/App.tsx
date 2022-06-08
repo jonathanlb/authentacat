@@ -87,7 +87,7 @@ function App() {
         <Card className="App">
           <Box className="AppHeader">
             <a href="https://mnmando.org">
-              <img src="logo.png" />
+              <img src="logo.png" alt="Minnesota Mandolin Orchestra logo" />
             </a>
 
             <Typography className="UserNameNotice">Welcome, { user?.attributes?.name } </Typography>

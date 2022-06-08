@@ -4,10 +4,11 @@ import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
 
-import { InterestResponse } from './aggregate';
+import { groupBy, InterestResponse } from './aggregate';
 import { RollCallTab } from './RollCallTab';
-import { TabPanel, TabPanelProps } from './TabBoiler';
+import { TabPanel } from './TabBoiler';
 
 export type SectionRollCallTabProps = {
   rsvps: Array<InterestResponse>,
@@ -16,15 +17,7 @@ export type SectionRollCallTabProps = {
 export function SectionRollCallTab(props: SectionRollCallTabProps) {
   const [activeTab, setActiveTab] = useState(0);
 
-  const section2rsvps = new Map<string,Array<InterestResponse>>();
-  props.rsvps.forEach(rsvp => {
-    const { section } = rsvp;
-    if (section2rsvps.has(section)) {
-      section2rsvps.get(section)?.push(rsvp);
-    } else {
-      section2rsvps.set(section, [rsvp]);
-    }
-  })
+  const section2rsvps = groupBy(props.rsvps, 'section');
 
   function handleTabChange(e: React.SyntheticEvent, newActiveTab: number) {
     setActiveTab(newActiveTab);
@@ -40,15 +33,27 @@ export function SectionRollCallTab(props: SectionRollCallTabProps) {
           value={activeTab}
           variant="scrollable"
         >
+          <Tab key="_all_sections_" label="All Sections" aria-label=" All Sections roll call" />
           { Array.from(section2rsvps.keys()).map(section => (
               <Tab key={section} label={section} aria-label={`${section} roll call`} />
             ))
           }
         </Tabs>
       </Card>
+      <TabPanel value={activeTab} index={0} key="_all_sections_">
+        { Array.from(section2rsvps.entries()).map((kv, i) => (
+            <Card style={{margin:'2%', padding:'2%'}} key={kv[0]}>
+              <Typography variant="h4">
+                {kv[0]}
+              </Typography>
+              <RollCallTab rsvps={kv[1]} hideSection={true} hideNonResponses={true} />
+            </Card>
+          ))
+        }
+      </TabPanel>
 
       { Array.from(section2rsvps.entries()).map((kv, i) => (
-          <TabPanel value={activeTab} index={i} key={kv[0]}>
+          <TabPanel value={activeTab} index={i+1} key={kv[0]}>
             <RollCallTab rsvps={kv[1]} hideSection={true} />
           </TabPanel>
         ))

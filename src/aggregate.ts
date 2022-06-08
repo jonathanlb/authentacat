@@ -11,6 +11,19 @@ export type SectionResponse = {
   negatives: number;
 };
 
+export function groupBy<T>(xs: Array<T>, key: string): Map<string, Array<T>> {
+  const key2groups = new Map<string,Array<any>>();
+  xs.forEach(x => {
+    const k = (x as any)[key];
+    if (key2groups.has(k)) {
+      key2groups.get(k)?.push(x);
+    } else {
+      key2groups.set(k, [x]);
+    }
+  })
+  return key2groups;
+}
+
 export function tallyBySection(rsvps: Array<InterestResponse>): Array<SectionResponse> {
   function initSection(section: string): SectionResponse { 
     return {

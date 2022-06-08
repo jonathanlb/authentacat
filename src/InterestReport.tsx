@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import Tab from '@mui/material/Tab';
@@ -16,7 +15,7 @@ import { InterestResponse } from './aggregate';
 import { RollCallTab } from './RollCallTab';
 import { SectionRollCallTab } from './SectionRollCallTab';
 import { SectionTotalsTab } from './SectionTotalsTab';
-import { TabPanel, TabPanelProps } from './TabBoiler';
+import { TabPanel } from './TabBoiler';
 
 export type InterestReportProps = {
   time: string;
