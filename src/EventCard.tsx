@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -13,69 +13,43 @@ import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import './EventCard.css';
+import { InterestResponse, RsvpCount, summarizeResponses } from './aggregate';
 import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
 import { formatDate, formatTime } from './DateTimeInterest';
 import { InterestReport } from './InterestReport';
 import { VenueCard, VenueCardProps } from './VenueCard';
+
+import Debug from 'debug';
+
+const debug = Debug('eventCard');
 
 export type EventCardProps = {
   descriptionMd: string,
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
+  getInterestResponse: (dateTimeId: number) => Promise<Array<InterestResponse>>,
 };
 
 const showAdmin = true;
 
-function dummyInterestResponse() {
-  return Promise.resolve([
-    { name: 'Adam',
-      section: 'Alto',
-      rsvp: 1,
-    },
-    { name: 'Alvin',
-      section: 'Alto',
-      rsvp: 1,
-    },
-    { name: 'Arnie',
-      section: 'Alto',
-      rsvp: 0,
-    },
-    { name: 'Beth',
-      section: 'Bass',
-      rsvp: -1,
-    },
-    { name: 'Carlos',
-      section: 'Conductor',
-      rsvp: 1,
-    },
-    { name: 'Susan',
-      section: 'Soprano',
-      rsvp: 1,
-    },
-    { name: 'Ted',
-      section: 'Tenor',
-      rsvp: 1,
-    },
-    { name: 'Theodore',
-      section: 'Tenor',
-      rsvp: 0,
-    },
-  ]);
-}
-
 export function EventCard(props: EventCardProps) {
-  const [ showInterestReport, setShowInterestReport] = useState(false);
-  const [ dateTimeInterest, setDateTimeInterest] = useState('');
+  debug('render');
+  const [ showInterestReportId, setShowInterestReportId ] = useState(0);
+  const [ dateTimeInterest, setDateTimeInterest ] = useState('');
 
   function handleShowInterestReport(dt: DateTimeInterestProps) {
-    setShowInterestReport(true);
+    setShowInterestReportId(dt.id);
     setDateTimeInterest(`${formatDate(dt.yyyymmdd)} ${formatTime(dt.hhmm)} (${dt.duration})`);
   }
 
   function handleHideInterestReport() {
-    setShowInterestReport(false);
+    setShowInterestReportId(0);
   }
+
+  const responses = new Map<number, Promise<Array<InterestResponse>>>();
+  props.dateTimes.forEach( dt => 
+    responses.set(dt.id, props.getInterestResponse(dt.id)));
 
   return(
     <Card className="EventCard" raised={true}>
@@ -94,8 +68,10 @@ export function EventCard(props: EventCardProps) {
         </AccordionDetails>
       </Accordion>
 
-      { showInterestReport 
-        ? <InterestReport hideF={handleHideInterestReport} time={dateTimeInterest} getResponsesP={dummyInterestResponse()}/>  // XXX
+      { showInterestReportId > 0
+        ? <InterestReport hideF={handleHideInterestReport} 
+            time={dateTimeInterest}
+            getResponsesP={responses.get(showInterestReportId) || Promise.resolve([])}/>
         : <Card className="DateTimesDiv">
             { props.dateTimes.map((dt, i) =>
                <Box sx={{

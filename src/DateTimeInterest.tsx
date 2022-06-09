@@ -9,20 +9,20 @@ import ThumbDown from '@mui/icons-material/ThumbDown';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 
 import './DateTimeInterest.css';
+import { RsvpCount } from './aggregate';
 import { InterestIndicator } from './InterestIndicator';
+
+import Debug from 'debug';
+
+const debug = Debug('dateTime');
 
 const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
 const TIME_RE = /^([0-9]{1,2})[:/-]?([0-9]{2})$/;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
-export type RsvpCount = {
-  yes: number,
-  no: number,
-  maybe: number,
-};
-
 export type DateTimeInterestProps = {
+  id: number,
   hhmm: string,
   yyyymmdd: string,
   duration: string,
@@ -76,11 +76,14 @@ export function formatDateTime(dt: DateTimeInterestProps): string {
 }
 
 export function DateTimeInterest(props: DateTimeInterestProps) {
+  debug('render');
+
   const formattedDateTime = formatDateTime(props);
   const [ rsvp, setRsvp ] = useState(props.rsvp);
   const [ rsvpCount, setCount ] = useState(props.rsvpCount);
 
   function handleSlider(e: Event | number) {
+    debug('handleSlider', e);
     let newValue = 0;
     if (typeof e === 'number') {
       newValue = e;

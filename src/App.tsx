@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
@@ -14,53 +14,14 @@ import Search from '@mui/icons-material/Search';
 
 import { EventCard, EventCardProps } from './EventCard';
 
-const venue = {
-  name: 'Bob\'s Big Tent',
-  address: '1234 Some Place, Anytown'
-};
+export type AppProps = {
+  getEventsP: Promise<Array<EventCardProps>>;
+}
 
-const eventConfigs = [
-  {
-    descriptionMd: 'We\'ll perform all the **greatest** hits and misses of the Orangatan Oboe Orchestra.\n\nBring your own snacks.',
-    name: 'The Festivalissimo!',
-    venue,
-    dateTimes: [
-      { hhmm: '16:15',
-        yyyymmdd: '2022-05-13',
-        duration: '60m',
-        rsvp: 0,
-        rsvpCount: { yes: 5, no: 3, maybe: 1 },
-      },
-      { hhmm: '15:15',
-        yyyymmdd: '2022-05-14',
-        duration: '60m',
-        rsvp: 1,
-        rsvpCount: { yes: 1, no: 1, maybe: 1 },
-      },
-    ],
-  },
-  {
-    descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
-    name: 'A Rerun',
-    venue,
-    dateTimes: [
-      { hhmm: '17:00',
-        yyyymmdd: '2022-06-04',
-        duration: '60m',
-        rsvp: -1,
-        rsvpCount: { yes: 1, no: 2, maybe: 0 },
-      },
-      { hhmm: '18:00',
-        yyyymmdd: '2022-06-05',
-        duration: '60m',
-        rsvp: -1,
-        rsvpCount: { yes: 0, no: 10, maybe: 0 },
-      },
-    ],
-  }
-];
+function App(props: AppProps) {
+  const [ eventConfigs, setEventConfigs ] = useState([] as Array<EventCardProps>);
+  props.getEventsP.then(setEventConfigs);
 
-function App() {
   function updateCardVisibility(filterStr: string) {
     const trimmedFilter = filterStr.trim().toLowerCase();
     eventConfigs.forEach((ec: EventCardProps, i: number) => {
@@ -113,10 +74,7 @@ function App() {
                   key={eventConfig.name} >
                 <EventCard
                   key={eventConfig.name}
-                  name={eventConfig.name}
-                  descriptionMd={eventConfig.descriptionMd}
-                  venue={eventConfig.venue}
-                  dateTimes={eventConfig.dateTimes}
+                  {...eventConfig}
                 />
                 </Box>
               )

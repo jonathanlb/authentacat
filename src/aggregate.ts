@@ -1,7 +1,17 @@
+import Debug from 'debug';
+
+const debug = Debug('aggregate');
+
 export type InterestResponse = {
   name: string;
   section: string;
   rsvp: number;
+};
+
+export type RsvpCount = {
+  yes: number;
+  no: number;
+  maybe: number;
 };
 
 export type SectionResponse = {
@@ -22,6 +32,18 @@ export function groupBy<T>(xs: Array<T>, key: string): Map<string, Array<T>> {
     }
   })
   return key2groups;
+}
+
+export function summarizeResponses(res: Array<InterestResponse>): RsvpCount {
+  debug('summarizeResponses');
+  const result = { yes: 0, no: 0, maybe: 0 };
+  res.forEach(r => {
+    if (r.rsvp > 0) { result.yes += 1; }
+    else if (r.rsvp < 0) { result.no += 1; }
+    else { result.maybe += 1; }
+  })
+
+  return result;
 }
 
 export function tallyBySection(rsvps: Array<InterestResponse>): Array<SectionResponse> {
