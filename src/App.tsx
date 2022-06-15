@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './App.css';
+
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
+
+import { Subject } from 'rxjs';
+
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
-import TextField from '@mui/material/TextField';
-import Tooltip from '@mui/material/Tooltip';
-import Typography from '@mui/material/Typography';
 
-import Logout from '@mui/icons-material/Logout';
-import Search from '@mui/icons-material/Search';
-
+import { AppHeader } from './AppHeader';
 import { EventCard, EventCardProps } from './EventCard';
 
 export type AppProps = {
   getEventsP: Promise<Array<EventCardProps>>;
 }
+
+const eventFilter = new Subject<string>();
 
 function App(props: AppProps) {
   const [ eventConfigs, setEventConfigs ] = useState([] as Array<EventCardProps>);
@@ -46,24 +46,12 @@ function App(props: AppProps) {
     <Authenticator>
       {({ signOut, user }) => (
         <Card className="App">
-          <Box className="AppHeader">
-            <a href="https://mnmando.org">
-              <img src="logo.png" alt="Minnesota Mandolin Orchestra logo" />
-            </a>
-
-            <Typography className="UserNameNotice">Welcome, { user?.attributes?.name } </Typography>
-            <Tooltip title="Filter events">
-              <TextField className="AppHeaderFilter"
-                aria-label="filter events by name or venue"
-                label={<Search />}
-                id="eventFilterText"
-                onChange={e => updateCardVisibility(e.target.value)} />
-            </Tooltip>
-
-            <Tooltip title="Logout">
-              <Button className="AppHeaderButton" aria-label="logout button" onClick={signOut}><Logout/></Button>
-            </Tooltip>
-          </Box>
+          <AppHeader homeHref="https://mnmando.org"
+            filter={eventFilter}
+            logoImageSrc="logo.png"
+            logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
+            signOut={signOut}
+            userName={user?.attributes?.name || '???'} />
           { eventConfigs.map((eventConfig: EventCardProps, i: number) =>
                 <Box sx={{
                   visibility: "visible",

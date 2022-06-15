@@ -2,7 +2,6 @@
   "name": "authentacat-react",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://rsvp.mmo.mando.land/demo",
   "dependencies": {
     "@aws-amplify/ui-react": "^2.17.1",
     "@emotion/react": "^11.9.0",
@@ -22,6 +21,7 @@
     "react-dom": "^18.1.0",
     "react-markdown": "^8.0.3",
     "react-scripts": "5.0.1",
+    "rxjs": "^7.5.5",
     "typescript": "^4.6.4",
     "web-vitals": "^2.1.4"
   },
