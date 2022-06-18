@@ -1,6 +1,6 @@
 import Debug from 'debug';
 
-const debug = Debug('aggregate');
+const debug = Debug('rsvp:model:aggregate');
 
 export type InterestResponse = {
   name: string;

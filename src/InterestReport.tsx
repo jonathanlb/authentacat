@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
@@ -8,6 +8,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import Close from '@mui/icons-material/Close';
+
+import { Observable } from 'rxjs';
 
 import './InterestReport.css';
 
@@ -20,7 +22,7 @@ import { TabPanel } from './TabBoiler';
 export type InterestReportProps = {
   time: string;
   hideF: () => void;
-  getResponsesP: Promise<Array<InterestResponse>>;
+  responses: Observable<Array<InterestResponse>>;
 };
 
 export function InterestReport(props: InterestReportProps) {
@@ -31,7 +33,9 @@ export function InterestReport(props: InterestReportProps) {
     setActiveTab(newActiveTab);
   }
 
-  props.getResponsesP.then(setRsvps);
+  useEffect(() => {
+    props.responses.subscribe(setRsvps);
+  }, [ props.responses] );
 
   return(
     <Card className="InterestReportCard" raised={true}>

@@ -14,7 +14,7 @@ import { InterestIndicator } from './InterestIndicator';
 
 import Debug from 'debug';
 
-const debug = Debug('dateTime');
+const debug = Debug('rsvp:component:dateTime');
 
 const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
 const TIME_RE = /^([0-9]{1,2})[:/-]?([0-9]{2})$/;

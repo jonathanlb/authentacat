@@ -12,6 +12,8 @@ import Typography from '@mui/material/Typography';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+import { Observable } from 'rxjs';
+
 import './EventCard.css';
 import { InterestResponse, RsvpCount, summarizeResponses } from './aggregate';
 import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
@@ -21,14 +23,14 @@ import { VenueCard, VenueCardProps } from './VenueCard';
 
 import Debug from 'debug';
 
-const debug = Debug('eventCard');
+const debug = Debug('rsvp:component:eventCard');
 
 export type EventCardProps = {
   descriptionMd: string,
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
-  getInterestResponse: (dateTimeId: number) => Promise<Array<InterestResponse>>,
+  interestResponse: Observable<Array<InterestResponse>>,
 };
 
 const showAdmin = true;
@@ -47,9 +49,9 @@ export function EventCard(props: EventCardProps) {
     setShowInterestReportId(0);
   }
 
-  const responses = new Map<number, Promise<Array<InterestResponse>>>();
-  props.dateTimes.forEach( dt => 
-    responses.set(dt.id, props.getInterestResponse(dt.id)));
+  const responses = new Map<number, Observable<Array<InterestResponse>>>();
+  props.dateTimes.forEach(dt => 
+    responses.set(dt.id, props.interestResponse));
 
   return(
     <Card className="EventCard" raised={true}>
@@ -71,7 +73,7 @@ export function EventCard(props: EventCardProps) {
       { showInterestReportId > 0
         ? <InterestReport hideF={handleHideInterestReport} 
             time={dateTimeInterest}
-            getResponsesP={responses.get(showInterestReportId) || Promise.resolve([])}/>
+            responses={responses.get(showInterestReportId) as Observable<Array<InterestResponse>>}/>
         : <Card className="DateTimesDiv">
             { props.dateTimes.map((dt, i) =>
                <Box sx={{

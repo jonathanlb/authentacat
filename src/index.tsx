@@ -4,8 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-import { demoConfig } from './demoConfig';
-import { config } from './config';
+import { newDemoConfig } from './demoConfig';
+import { newConfig } from './config';
 
 import { Amplify } from 'aws-amplify';
 import awsExports from './aws-exports';
@@ -13,7 +13,9 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = true;
-const appProps = demoMode ? demoConfig : config;
+const appProps = {
+  config: demoMode ? newDemoConfig() : newConfig(),
+};
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

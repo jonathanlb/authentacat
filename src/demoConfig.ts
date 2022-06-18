@@ -1,10 +1,12 @@
-import { RsvpCount } from './aggregate';
+import { Observable, ReplaySubject } from 'rxjs';
 
-import { summarizeResponses } from './aggregate';
+import { InterestResponse, summarizeResponses } from './aggregate';
+import { EventCardProps } from './EventCard';
+import { ServerInterface } from './serverInterface';
 
 import Debug from 'debug';
 
-const debug = Debug('demo');
+const debug = Debug('rsvp:control:demo');
 
 const venues = [
   {
@@ -148,57 +150,68 @@ const interestResponses = [
   ],
 ];
 
-function getInterestResponse(dateTimeId: number) {
-  debug('getInterestResponse', dateTimeId);
-  return Promise.resolve(interestResponses[dateTimeId-1]);
+function getInterestResponse(id: number): Observable<Array<InterestResponse>> {
+  const res = new ReplaySubject<Array<InterestResponse>>(1);
+  res.next(interestResponses[id-1]);
+  return res;
 }
 
+const events: Array<EventCardProps> = [
+  {
+    descriptionMd: 'We\'ll perform all the **greatest** hits and misses of the Orangatan Oboe Orchestra.\n\nBring your own snacks.',
+    name: 'The Festivalissimo!',
+    venue: venues[0],
+    dateTimes: [
+      { id: 1,
+        hhmm: '16:15',
+        yyyymmdd: '2022-05-13',
+        duration: '60m',
+        rsvp: 0,
+        rsvpCount: summarizeResponses(interestResponses[0]),
+      },
+      { id: 2,
+        hhmm: '15:15',
+        yyyymmdd: '2022-05-14',
+        duration: '60m',
+        rsvp: 1,
+        rsvpCount: summarizeResponses(interestResponses[1]),
+      },
+    ],
+    interestResponse: getInterestResponse(1),
+  },
+  {
+    descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
+    name: 'A Rerun',
+    venue: venues[1],
+    dateTimes: [
+      { id: 3,
+        hhmm: '17:00',
+        yyyymmdd: '2022-06-04',
+        duration: '60m',
+        rsvp: -1,
+        rsvpCount: summarizeResponses(interestResponses[2]),
+      },
+      { id: 4,
+        hhmm: '18:00',
+        yyyymmdd: '2022-06-05',
+        duration: '60m',
+        rsvp: -1,
+        rsvpCount: summarizeResponses(interestResponses[3]),
+      },
+    ],
+    interestResponse: getInterestResponse(2),
+  }
+];
 
-export const demoConfig = {
-  getEventsP: Promise.resolve([
-    {
-      descriptionMd: 'We\'ll perform all the **greatest** hits and misses of the Orangatan Oboe Orchestra.\n\nBring your own snacks.',
-      name: 'The Festivalissimo!',
-      venue: venues[0],
-      dateTimes: [
-        { id: 1,
-          hhmm: '16:15',
-          yyyymmdd: '2022-05-13',
-          duration: '60m',
-          rsvp: 0,
-          rsvpCount: summarizeResponses(interestResponses[0]),
-        },
-        { id: 2,
-          hhmm: '15:15',
-          yyyymmdd: '2022-05-14',
-          duration: '60m',
-          rsvp: 1,
-          rsvpCount: summarizeResponses(interestResponses[1]),
-        },
-      ],
-      getInterestResponse,
+export function newDemoConfig(): ServerInterface {
+  const eventCards = new ReplaySubject<Array<EventCardProps>>(1);
+
+  return {
+    eventCards,
+    start: () => {
+      debug('start');
+      eventCards.next(events);
+      return Promise.resolve();
     },
-    {
-      descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
-      name: 'A Rerun',
-      venue: venues[1],
-      dateTimes: [
-        { id: 3,
-          hhmm: '17:00',
-          yyyymmdd: '2022-06-04',
-          duration: '60m',
-          rsvp: -1,
-          rsvpCount: summarizeResponses(interestResponses[2]),
-        },
-        { id: 4,
-          hhmm: '18:00',
-          yyyymmdd: '2022-06-05',
-          duration: '60m',
-          rsvp: -1,
-          rsvpCount: summarizeResponses(interestResponses[3]),
-        },
-      ],
-      getInterestResponse,
-    }
-  ]),
-};
+  };
+}

@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
 import { render, screen, waitFor } from '@testing-library/react';
+import { ReplaySubject } from 'rxjs';
+import { InterestResponse } from './aggregate';
 import { InterestReport } from './InterestReport';
 
 let container: any;
@@ -20,7 +22,7 @@ test('renders empty responses', async () => {
   const props = {
     time: 'Fri, May 13, 2022 4:15 pm (60m)',
     hideF: () => {},
-    getResponsesP: Promise.resolve([ ]),
+    responses: new ReplaySubject<Array<InterestResponse>>(1),
   };
 
   act(() => {
@@ -33,15 +35,17 @@ test('renders empty responses', async () => {
 });
 
 test('renders two sections of responses', async () => {
-  const props = {
-    time: 'Fri, May 13, 2022 4:15 pm (60m)',
-    hideF: () => {},
-    getResponsesP: Promise.resolve([
+  const responses = new ReplaySubject<Array<InterestResponse>>(1);
+  responses.next([
       { name: 'Bill', section: 'Bass', rsvp: 0 },
       { name: 'Bob', section: 'Bass', rsvp: 1 },
       { name: 'Steve', section: 'Soprano', rsvp: -1 },
       { name: 'Sue', section: 'Soprano', rsvp: 1 },
-    ]),
+  ]);
+  const props = {
+    time: 'Fri, May 13, 2022 4:15 pm (60m)',
+    hideF: () => {},
+    responses,
   };
 
   act(() => {
