@@ -12,7 +12,7 @@ import awsExports from './aws-exports';
 
 Amplify.configure(awsExports);
 
-const demoMode = true;
+const demoMode = false;
 const appProps = {
   config: demoMode ? newDemoConfig() : newConfig(),
 };

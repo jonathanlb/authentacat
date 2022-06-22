@@ -76,7 +76,7 @@ export function formatDateTime(dt: DateTimeInterestProps): string {
 }
 
 export function DateTimeInterest(props: DateTimeInterestProps) {
-  debug('render');
+  debug('render', props);
 
   const formattedDateTime = formatDateTime(props);
   const [ rsvp, setRsvp ] = useState(props.rsvp);
