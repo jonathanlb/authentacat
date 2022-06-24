@@ -16,8 +16,8 @@ import { Observable } from 'rxjs';
 
 import './EventCard.css';
 import { InterestResponse, RsvpCount, summarizeResponses } from './aggregate';
+import { formatDate, formatTime } from './dateTime';
 import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
-import { formatDate, formatTime } from './DateTimeInterest';
 import { InterestReport } from './InterestReport';
 import { VenueCard, VenueCardProps } from './VenueCard';
 
@@ -30,7 +30,7 @@ export type EventCardProps = {
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
-  interestResponse: Observable<Array<InterestResponse>>,
+  interestResponse: Observable<Array<InterestResponse>>, // XXX wrong, need to break up by datetime
 };
 
 const showAdmin = true;

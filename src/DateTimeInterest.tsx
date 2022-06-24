@@ -1,75 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
+import { BehaviorSubject } from 'rxjs';
+
 import ThumbDown from '@mui/icons-material/ThumbDown';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 
 import './DateTimeInterest.css';
 import { RsvpCount } from './aggregate';
+import { formatDate, formatTime } from './dateTime';
 import { InterestIndicator } from './InterestIndicator';
 
 import Debug from 'debug';
 
 const debug = Debug('rsvp:component:dateTime');
 
-const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
-const TIME_RE = /^([0-9]{1,2})[:/-]?([0-9]{2})$/;
-const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-
 export type DateTimeInterestProps = {
   id: number,
   hhmm: string,
   yyyymmdd: string,
   duration: string,
-  rsvp: number,
-  rsvpCount: RsvpCount,
+  rsvp: BehaviorSubject<number>, // only call next
+  rsvpCount: BehaviorSubject<RsvpCount>, // only call subscribe
 };
-
-/**
- * Format date string for printing. Avoiding Date library to avoid local
- * midnight, etc.
- */
-export function formatDate(yyyymmdd: string): string {
-  const ymdArray = yyyymmdd.match(DATE_RE) || [];
-  if (ymdArray.length !== 4) {
-    throw new Error(`Cannot parse date '${yyyymmdd}'`);
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, yyyy, mm, dd] = ymdArray;
-  const year = parseInt(yyyy, 10);
-  const day = parseInt(dd, 10);
-  const month = parseInt(mm, 10);
-  if (month > 12 || day > 31 || month < 1 || day < 1) {
-    throw new Error(`Cannot parse date '${yyyymmdd}'`);
-  }
-  const date = new Date(year, month - 1, day);
-  return `${DAYS[date.getDay()]}, ${MONTHS[month - 1]} ${day}, ${year}`;
-}
-
-/** Format time for printing. */
-export function formatTime(hhmm: string): string {
-  const hmAr = hhmm.match(TIME_RE) || [];
-  if (hmAr.length !== 3) {
-    throw new Error(`Cannot parse time from '${hhmm}'`);
-  }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, hh, mm] = hmAr;
-  const hour = parseInt(hh, 10);
-  let hour4Str;
-  if (hour === 0) {
-    hour4Str = 12;
-  } else if (hour < 13) {
-    hour4Str = hour;
-  } else {
-    hour4Str = hour - 12;
-  }
-  return `${hour4Str}:${mm} ${hour < 12 ? 'am' : 'pm'}`;
-}
 
 export function formatDateTime(dt: DateTimeInterestProps): string {
   return `${formatDate(dt.yyyymmdd)} ${formatTime(dt.hhmm)} (${dt.duration})`;
@@ -79,11 +36,20 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
   debug('render', props);
 
   const formattedDateTime = formatDateTime(props);
-  const [ rsvp, setRsvp ] = useState(props.rsvp);
-  const [ rsvpCount, setCount ] = useState(props.rsvpCount);
+  const [ rsvp, setRsvp ] = useState(props.rsvp.getValue());
+  const [ rsvpCount, setCount ] = useState(props.rsvpCount.getValue());
+
+  useEffect(() => {
+    props.rsvp.subscribe(setRsvp);
+  }, [ props.rsvp ]);
+
+  useEffect(() => {
+    props.rsvpCount.subscribe(setCount);
+  }, [ props.rsvpCount ]);
 
   function handleSlider(e: Event | number) {
     debug('handleSlider', e);
+    debug('handleSlider rsvp', rsvp, rsvpCount);
     let newValue = 0;
     if (typeof e === 'number') {
       newValue = e;
@@ -112,6 +78,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
       } else {
         tmpCount.maybe += 1;
       }
+      props.rsvp.next(newValue);
       setRsvp(newValue);
       setCount(tmpCount);
     }
@@ -133,7 +100,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
       <Box sx={{width: "25%", marginLeft: "1%", marginRight: "1%"}}>
         <Slider
           aria-label="RSVP"
-          defaultValue={ props.rsvp }
+          defaultValue={ props.rsvp.getValue() }
           value={ rsvp }
           min={-1} max={1} step={1} 
           onChange={handleSlider}/>
