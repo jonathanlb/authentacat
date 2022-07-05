@@ -36,7 +36,7 @@ function App(props: AppProps) {
               logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
               signOut={signOut}
               userName={user?.attributes?.name || '???'} />
-            <EventContent eventCards={props.config.eventCards} filter={eventFilter} /> 
+            <EventContent eventCards={props.config.eventCards} filter={eventFilter} showRsvpDetails={true}/> 
           </Card>
         );
       }}

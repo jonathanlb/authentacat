@@ -53,14 +53,14 @@ export class InterestReporter {
     this.rsvpCountQueries.set(eventId, counts);
 
     const url = `${this.serverName}/event/summary/${eventId}`;
-    fetch(url, this.fetchOpts()).
-      then(resp => {
+    fetch(url, this.fetchOpts())
+      .then(resp => {
         if (resp.status !== 200) {
           throw new Error(`Cannot retrieve rsvps from server: ${resp.status} ${resp.statusText}`);
         }
         return resp.json();
-      }).
-      then(obj => { // dateTime -> 0/1 -> count
+      })
+      .then(obj => { // dateTime -> 0/1 -> count
         debug('rsvps count', obj);
         Object.entries(obj).forEach(kv => {
           const id = Number(kv[0]);

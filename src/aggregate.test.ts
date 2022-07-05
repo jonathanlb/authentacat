@@ -1,4 +1,4 @@
-import { groupBy, tallyBySection } from './aggregate';
+import { groupBy, summarizeResponses, tallyBySection } from './aggregate';
 
 test('groups empty list', () => {
   expect(groupBy([], 'some-key')).toEqual(new Map());
@@ -21,13 +21,29 @@ test('groups by a key', () => {
     },
   ];
 
-  expect(groupBy(lst, 'key')).
-    toEqual(new Map([
+  expect(groupBy(lst, 'key'))
+    .toEqual(new Map([
       ['a', [ { key: 'a', value: 1 }, { key: 'a', value: 2 }]],
       ['b', [ { key: 'b', value: 3 }]],
     ]));
 });
 
+test('summarizes empty response', () => {
+  const count = summarizeResponses([]);
+  expect(count).toEqual({ yes: 0, no: 0, maybe: 0 });
+});
+
+test('summarizes responses', () => {
+  const count = summarizeResponses([
+    { name: 'Abel', section: 'alto', rsvp: 1 },
+    { name: 'Beth', section: 'bass', rsvp: 0 },
+    { name: 'Chuck', section: 'contralto', rsvp: 1 },
+    { name: 'Fred', section: 'flute', rsvp: -1 },
+    { name: 'Gabby', section: 'guitar', rsvp: 1 },
+    { name: 'Hera', section: 'harp', rsvp: -1 },
+  ]);
+  expect(count).toEqual({ yes: 3, no: 2, maybe: 1 });
+});
 
 test('tallies empty responses', () => {
   expect(tallyBySection([])).toEqual([]);

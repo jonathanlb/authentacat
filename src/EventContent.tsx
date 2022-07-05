@@ -9,6 +9,7 @@ import { EventCard, EventCardProps } from './EventCard';
 export type EventContentProps = {
   eventCards: Observable<Array<EventCardProps>>;
   filter: Observable<string>;
+  showRsvpDetails?: boolean;
 };
 
 const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';
@@ -69,6 +70,7 @@ export function EventContent(props: EventContentProps) {
 
             <EventCard
               key={eventConfig.name}
+              showAdmin={props.showRsvpDetails}
               {...eventConfig} />
           </Box>
         )

@@ -56,14 +56,14 @@ export class RsvpReporter {
 
     const url = `${this.serverName}/event/rsvp/${eventId}`;
     debug('getEventRsvp', url);
-    fetch(url, this.fetchOpts()).
-      then(resp => {
+    fetch(url, this.fetchOpts())
+      .then(resp => {
         if (resp.status !== 200) {
           throw new Error(`Cannot rsvp to server: ${resp.status} ${resp.statusText}`);
         }     
         return resp.json();
-      }).
-      then(dtXr => {
+      })
+      .then(dtXr => {
         // inform others of the rsvp downloaded
         debug('gotEventRsvp', dtXr);
         Object.entries(dtXr).forEach(kv => {

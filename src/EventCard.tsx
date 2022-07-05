@@ -31,9 +31,8 @@ export type EventCardProps = {
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
   interestResponse: Observable<Array<InterestResponse>>, // XXX wrong, need to break up by datetime
+  showAdmin?: boolean,
 };
-
-const showAdmin = true;
 
 export function EventCard(props: EventCardProps) {
   debug('render');
@@ -71,7 +70,8 @@ export function EventCard(props: EventCardProps) {
       </Accordion>
 
       { showInterestReportId > 0
-        ? <InterestReport hideF={handleHideInterestReport} 
+        ? <InterestReport
+            hideF={handleHideInterestReport} 
             time={dateTimeInterest}
             responses={responses.get(showInterestReportId) as Observable<Array<InterestResponse>>}/>
         : <Card className="DateTimesDiv">
@@ -82,13 +82,17 @@ export function EventCard(props: EventCardProps) {
                  width: '100%',
                }} 
                key={`dt-choice-${i}`} >
-               <Box sx={{ width: showAdmin ? '90%' : '100%' }}>
+               <Box sx={{ width: props.showAdmin ? '90%' : '100%' }}>
                  <DateTimeInterest {...dt} key={i} />
                </Box>
 
-               { showAdmin
+               { props.showAdmin
                    ? <Tooltip title="Show RSVP summary report">
-                      <Button sx={{ width: '10%' }} onClick={e => handleShowInterestReport(dt)}>
+                      <Button 
+                        data-testid={`show-rsvp-details-${dt.id}`}
+                        aria-label="show rsvp details"
+                        sx={{ width: '10%' }}
+                        onClick={e => handleShowInterestReport(dt)}>
                         <ExpandMoreIcon />
                       </Button>
                     </Tooltip>

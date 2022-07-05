@@ -33,9 +33,15 @@ export function SectionRollCallTab(props: SectionRollCallTabProps) {
           value={activeTab}
           variant="scrollable"
         >
-          <Tab key="_all_sections_" label="All Sections" aria-label=" All Sections roll call" />
+          <Tab key="_all_sections_"
+            label="All Sections"
+            aria-label="All Sections roll call"
+            data-testid="all-sections-roll-call-tab" />
           { Array.from(section2rsvps.keys()).map(section => (
-              <Tab key={section} label={section} aria-label={`${section} roll call`} />
+              <Tab key={section}
+                label={section}
+                aria-label={`${section} roll call`}
+                data-testid={`${section}-section-roll-call-tab`} />
             ))
           }
         </Tabs>
