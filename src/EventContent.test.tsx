@@ -62,7 +62,8 @@ test('event content filters', () => {
   act(() => {
     filter.next('zzzzzzzzzzzzzzzzzzzzz');
   });
-  expect(() => screen.getByTestId('eventCard_0')).toThrow();
+  elt = screen.getByTestId('eventCard_0');
+  expect(elt).not.toBeVisible();
 
   act(() => {
     filter.next(venue.name);
