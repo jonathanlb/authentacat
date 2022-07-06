@@ -34,46 +34,22 @@ export function EventContent(props: EventContentProps) {
   function updateCardVisibility(filterStr: string) {
     const trimmedFilter = filterStr.trim().toLowerCase();
     setFilter(trimmedFilter);
-    eventCards.forEach((ec: EventCardProps, i: number) => {
-      const elt = document.getElementById(`eventCard_${i}`);
-      if (elt != null) {
-        if (isCardVisible(ec, trimmedFilter)) {
-          elt.style['visibility'] = 'visible';
-          elt.style['opacity'] = '1';
-          elt.style['height'] = '';
-        } else {
-          elt.style['visibility'] = 'hidden';
-          elt.style['opacity'] = '0';
-          elt.style['height'] = '0px';
-        }
-      }
-    });
-    return true;
   }
 
   return (
     <Box>
-      { eventCards.map((eventConfig: EventCardProps, i: number) =>
-          <Box sx={isCardVisible(eventConfig, filter) ?
-              { visibility: 'visible',
-                opacity: 1,
-                transition: CARD_TRANSITION,
-              } :
-              { visibility: 'hidden',
-                opacity: 0,
-                height: '0px',
-                transition: CARD_TRANSITION,
-              }
-            }
-            id={`eventCard_${i}`}
-            key={eventConfig.name} >
+      { eventCards
+          .filter((ec: EventCardProps) => isCardVisible(ec, filter))
+          .map((eventConfig: EventCardProps, i: number) =>
+            <Box data-testid={`eventCard_${i}`}
+              key={eventConfig.name} >
 
-            <EventCard
-              key={eventConfig.name}
-              showAdmin={props.showRsvpDetails}
-              {...eventConfig} />
-          </Box>
-        )
+              <EventCard
+                key={eventConfig.name}
+                showAdmin={props.showRsvpDetails}
+                {...eventConfig} />
+            </Box>
+          )
       }
     </Box>
   );
