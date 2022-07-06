@@ -12,8 +12,6 @@ export type EventContentProps = {
   showRsvpDetails?: boolean;
 };
 
-const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';
-
 export function EventContent(props: EventContentProps) {
   const [ eventCards, setEventCards ] = useState([] as Array<EventCardProps>);
   const [ filter, setFilter ] = useState('');
@@ -42,8 +40,8 @@ export function EventContent(props: EventContentProps) {
           .filter((ec: EventCardProps) => isCardVisible(ec, filter))
           .map((eventConfig: EventCardProps, i: number) =>
             <Box data-testid={`eventCard_${i}`}
+              className="EventCardBox"
               key={eventConfig.name} >
-
               <EventCard
                 key={eventConfig.name}
                 showAdmin={props.showRsvpDetails}

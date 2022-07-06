@@ -1,5 +1,6 @@
 import Debug from 'debug';
 import { BehaviorSubject } from 'rxjs';
+import { skip } from 'rxjs/operators';
 
 const debug = Debug('rsvp:rsvpReporter');
 
@@ -35,7 +36,7 @@ export class RsvpReporter {
     let query = this.eventQueries.get(eventId);
     if (query !== undefined) {
       rsvp = query.get(dtId);
-      if (rsvp == undefined) {
+      if (rsvp === undefined) {
         rsvp = new BehaviorSubject(0);
         this.rsvps.set(dtId, rsvp);
       }
@@ -48,7 +49,7 @@ export class RsvpReporter {
     this.eventQueries.set(eventId, query);
 
     // wire up change to push user's response to server
-    rsvp.subscribe(x => {
+    rsvp.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
       const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${x}`;
       debug('rsvpPush', url);
       fetch(url, this.fetchOpts()); 
@@ -70,7 +71,7 @@ export class RsvpReporter {
           const id = Number(kv[0]);
           const r = kv[1] as number;
           let s = query?.get(id);
-          if (s == undefined) {
+          if (s === undefined) {
             query?.set(id, new BehaviorSubject(r));
           } else {
             s.next(r);

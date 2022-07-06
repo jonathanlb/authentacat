@@ -40,7 +40,7 @@ export class InterestReporter {
     let counts = this.rsvpCountQueries.get(eventId);
     if (counts !== undefined) {
       dtic = counts.get(dtId);
-      if (dtic == undefined) {
+      if (dtic === undefined) {
         dtic = new BehaviorSubject({yes: 0, no: 0, maybe: 0});
         counts.set(dtId, dtic);
       }
@@ -69,7 +69,7 @@ export class InterestReporter {
           debug('rsvp count', id, rsvpCount);
           
           let rsvpCountSubject = counts?.get(id);
-          if (rsvpCountSubject == undefined) {
+          if (rsvpCountSubject === undefined) {
             rsvpCountSubject = new BehaviorSubject(rsvpCount);
             counts?.set(id, rsvpCountSubject);
           } else {
