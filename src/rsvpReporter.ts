@@ -1,27 +1,26 @@
 import Debug from 'debug';
 import { BehaviorSubject } from 'rxjs';
 import { skip } from 'rxjs/operators';
+import { RestClient } from './restClient';
 
 const debug = Debug('rsvp:rsvpReporter');
 
 export type RsvpReporterConfig = {
+  accessToken?: string;
   serverName: string;
 };
 
 /**
  * Behavior to retrieve and report the user's rsvps for events.
  */
-export class RsvpReporter {
-  accessToken: string;
+export class RsvpReporter extends RestClient {
   rsvps: Map<number, BehaviorSubject<number>>;
   eventQueries: Map<number, Map<number, BehaviorSubject<number>>>;
-  serverName: string;
 
   constructor(config: RsvpReporterConfig) {
-    this.accessToken = '';
+    super(config);
     this.rsvps = new Map();
     this.eventQueries = new Map();
-    this.serverName = config.serverName;
   }
 
   /** 
@@ -80,13 +79,5 @@ export class RsvpReporter {
       }); 
 
     return rsvp;
-  }
-
-  private fetchOpts(): any {
-    return {
-      headers: {
-        authorization: this.accessToken,
-      },
-    };
   }
 }

@@ -1,19 +1,22 @@
 import { Auth } from '@aws-amplify/auth';
 
 import Debug from 'debug';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-import { InterestResponse, RsvpCount } from './aggregate';
 import { DateTimeInterestProps } from './DateTimeInterest';
 import { EventCardProps } from './EventCard';
 import { InterestReporter } from './interestReporter';
+import { RestClient } from './restClient';
+import { RsvpReportCollector } from './rsvpReportCollector';
 import { RsvpReporter } from './rsvpReporter';
 import { VenueCardProps } from './VenueCard';
+import { UserDirectory } from './userDirectory';
 
 const debug = Debug('rsvp:control');
 const errors = Debug('rsvp:control:error');
 
 export type ServerImplOpts = {
+  accessToken?: string;
   serverName: string;
 }
 
@@ -26,20 +29,24 @@ export type ServerInterface = {
 /**
  * Provide an interface to the back-end server for RSVP queries and posts.
  */
-export class ServerImpl {
-  accessToken: string;
-  eventCards: ReplaySubject<Array<EventCardProps>>;
+export class ServerImpl extends RestClient {
+  eventCards: BehaviorSubject<Array<EventCardProps>>;
   interestReporter: InterestReporter;
+  rsvpCollector: RsvpReportCollector;
   rsvpReporter: RsvpReporter;
-  serverName: string;
+  userDirectory: UserDirectory;
   venues: Map<number, Promise<VenueCardProps>>;
 
   constructor(config: ServerImplOpts) {
-    this.accessToken = '';
-    this.eventCards = new ReplaySubject(1);
+    super(config);
+    this.eventCards = new BehaviorSubject([] as Array<EventCardProps>);
+    this.userDirectory = new UserDirectory(config);
     this.interestReporter = new InterestReporter(config);
+    this.rsvpCollector = new RsvpReportCollector({
+      serverName: this.serverName,
+      userDirectory: this.userDirectory,
+    });
     this.rsvpReporter = new RsvpReporter(config);
-    this.serverName = config.serverName;
     this.venues = new Map();
     debug('init');
   }
@@ -64,7 +71,7 @@ export class ServerImpl {
       name: eventDesc.name,
       venue: await this.getVenue(eventDesc.venue),
       dateTimes: dts,
-      interestResponse: this.getRsvps(dts.map(dt => dt.id)),
+      interestResponse: this.rsvpCollector.getRsvps(eventId),
     };
     debug('completed event card', eventDesc.id);
     return Promise.resolve(eventCard);
@@ -100,11 +107,6 @@ export class ServerImpl {
     }) as Array<DateTimeInterestProps>;
   }
 
-  /** XXX TODO */
-  private getRsvps(dts: Array<number>): Observable<Array<InterestResponse>> {
-    return new ReplaySubject<Array<InterestResponse>>(1);
-  } // XXX
- 
   async getVenue(venueId: number): Promise<VenueCardProps> {
     if (!this.venues.has(venueId)) {
       const p = new Promise<VenueCardProps>(async (resolve, reject) => {
@@ -126,19 +128,13 @@ export class ServerImpl {
     return this.venues.get(venueId) as Promise<VenueCardProps>;
   }
 
-  private fetchOpts(): any {
-    return {
-      headers: {
-        authorization: this.accessToken,
-      },
-    };
-  }
-
   async start(): Promise<void> {
     const session = await Auth.currentSession();
     this.accessToken = session.getIdToken().getJwtToken();
     this.interestReporter.accessToken = this.accessToken;
+    this.rsvpCollector.accessToken = this.accessToken;
     this.rsvpReporter.accessToken = this.accessToken;
+    this.userDirectory.accessToken = this.accessToken;
     const ids = await this.getEventIds();
     const result = await Promise.all<EventCardProps>(
       ids.map((id: number) => this.eventId2CardProp(id))); // XXX catch error

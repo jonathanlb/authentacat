@@ -4,7 +4,7 @@ import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
 import Debug from 'debug';
-import { ReplaySubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import Card from '@mui/material/Card';
 
@@ -17,7 +17,7 @@ export type AppProps = {
 }
 
 const errors = Debug('App:errors');
-const eventFilter = new ReplaySubject<string>(1);
+const eventFilter = new BehaviorSubject<string>('');
 
 function App(props: AppProps) {
   return (
@@ -36,7 +36,7 @@ function App(props: AppProps) {
               logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
               signOut={signOut}
               userName={user?.attributes?.name || '???'} />
-            <EventContent eventCards={props.config.eventCards} filter={eventFilter} showRsvpDetails={true}/> 
+            <EventContent eventCards={props.config.eventCards} filter={eventFilter} /> 
           </Card>
         );
       }}

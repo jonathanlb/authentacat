@@ -1,19 +1,18 @@
 import Debug from 'debug';
 import { BehaviorSubject } from 'rxjs';
 
+import { RestClient } from './restClient';
 import { RsvpCount } from './aggregate';
 
 const debug = Debug('rsvp:interst');
 const errors = Debug('rsvp:interst:error');
 
 export type InterestReporterOpts = {
+  accessToken?: string;
   serverName: string;
 };
 
-export class InterestReporter {
-  accessToken: string;
-  serverName: string;
-
+export class InterestReporter extends RestClient {
   /** DateTimeId to rsvp tally notifications. */
   rsvpCounts: Map<number, BehaviorSubject<RsvpCount>>;
 
@@ -21,8 +20,7 @@ export class InterestReporter {
   rsvpCountQueries: Map<number, Map<number, BehaviorSubject<RsvpCount>>>;
 
   constructor(config: InterestReporterOpts) {
-    this.accessToken = '';
-    this.serverName = config.serverName;
+    super(config);
     this.rsvpCounts = new Map();
     this.rsvpCountQueries = new Map();
   }
@@ -78,13 +76,5 @@ export class InterestReporter {
         });
       });
     return dtic;
-  }
-
-  private fetchOpts(): any {
-    return {
-      headers: {
-        authorization: this.accessToken,
-      },
-    };
   }
 }

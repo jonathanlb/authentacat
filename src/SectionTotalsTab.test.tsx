@@ -13,16 +13,19 @@ test('renders empty section totals tab', () => {
 test('renders section totals tab', () => {
   const props = {
     rsvps: [{
+      dt: 11,
       name: 'Bob',
       section: 'bass',
       rsvp: 0,
     },
     {
+      dt: 11,
       name: 'Tabby',
       section: 'tenor',
       rsvp: -1,
     },
     {
+      dt: 11,
       name: 'Theodore',
       section: 'tenor',
       rsvp: 1,

@@ -56,7 +56,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
     } else {
       const me = e as any;
       if (me.target != null) {
-        newValue = me.target.value;
+        newValue = Number(me.target.value); // react-testing converts to string....
       } else {
         return;
       }
@@ -100,6 +100,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
       <Box sx={{width: "25%", marginLeft: "1%", marginRight: "1%"}}>
         <Slider
           aria-label="RSVP"
+          data-testid={`date-time-interest-slider-${props.id}`}
           defaultValue={ props.rsvp.getValue() }
           value={ rsvp }
           min={-1} max={1} step={1} 

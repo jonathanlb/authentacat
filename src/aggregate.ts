@@ -3,6 +3,7 @@ import Debug from 'debug';
 const debug = Debug('rsvp:model:aggregate');
 
 export type InterestResponse = {
+  dt: number;
   name: string;
   section: string;
   rsvp: number;

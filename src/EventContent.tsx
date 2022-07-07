@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { take } from 'rxjs/operators';
 
 import { EventCard, EventCardProps } from './EventCard';
 
 export type EventContentProps = {
   eventCards: Observable<Array<EventCardProps>>;
   filter: Observable<string>;
-  showRsvpDetails?: boolean;
 };
 
 const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';
@@ -17,9 +17,25 @@ const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';
 export function EventContent(props: EventContentProps) {
   const [ eventCards, setEventCards ] = useState([] as Array<EventCardProps>);
   const [ filter, setFilter ] = useState('');
+  const [ showRsvpDetails, setShowRsvpDetails ] = useState(false);
 
   useEffect(() => {
-    props.eventCards.subscribe(setEventCards);
+    const ecSub = props.eventCards.subscribe(setEventCards);
+    // Listen for changes in interest response
+    let irSub: Array<Subscription> = [];
+    const irCardSub = props.eventCards.pipe(take(2)).subscribe((eventCards) => {
+      irSub = eventCards.map(ec => ec.interestResponse.pipe(take(2)).subscribe(irs => {
+        if (irs.length > 0) {
+          setShowRsvpDetails(true);
+        }
+      }));
+    });
+
+    return function cleanup() {
+      ecSub.unsubscribe();
+      irCardSub.unsubscribe();
+      irSub.forEach(s => s.unsubscribe());
+    }
   }, [ props.eventCards ]);
 
   useEffect(() => {
@@ -55,7 +71,7 @@ export function EventContent(props: EventContentProps) {
               key={eventConfig.name} >
               <EventCard
                 key={eventConfig.name}
-                showAdmin={props.showRsvpDetails}
+                showAdmin={showRsvpDetails}
                 {...eventConfig} />
             </Box>
           )

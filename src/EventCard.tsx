@@ -15,7 +15,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Observable } from 'rxjs';
 
 import './EventCard.css';
-import { InterestResponse, RsvpCount, summarizeResponses } from './aggregate';
+import { InterestResponse } from './aggregate';
 import { formatDate, formatTime } from './dateTime';
 import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
 import { InterestReport } from './InterestReport';
@@ -30,7 +30,7 @@ export type EventCardProps = {
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
-  interestResponse: Observable<Array<InterestResponse>>, // XXX wrong, need to break up by datetime
+  interestResponse: Observable<Array<InterestResponse>>,
   showAdmin?: boolean,
 };
 

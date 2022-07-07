@@ -14,16 +14,19 @@ test('renders section roll call tab', async () => {
   const props = {
     rsvps: [
       {
+        dt: 11,
         name: 'Sam',
         section: 'soprano',
         rsvp: 0,
       },
       {
+        dt: 11,
         name: 'Stevie',
         section: 'mezzo-soprano',
         rsvp: 0,
       },
       {
+        dt: 11,
         name: 'Susan',
         section: 'mezzo-soprano',
         rsvp: 0,

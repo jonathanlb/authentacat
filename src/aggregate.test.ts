@@ -35,12 +35,12 @@ test('summarizes empty response', () => {
 
 test('summarizes responses', () => {
   const count = summarizeResponses([
-    { name: 'Abel', section: 'alto', rsvp: 1 },
-    { name: 'Beth', section: 'bass', rsvp: 0 },
-    { name: 'Chuck', section: 'contralto', rsvp: 1 },
-    { name: 'Fred', section: 'flute', rsvp: -1 },
-    { name: 'Gabby', section: 'guitar', rsvp: 1 },
-    { name: 'Hera', section: 'harp', rsvp: -1 },
+    { dt: 11, name: 'Abel', section: 'alto', rsvp: 1 },
+    { dt: 11, name: 'Beth', section: 'bass', rsvp: 0 },
+    { dt: 11, name: 'Chuck', section: 'contralto', rsvp: 1 },
+    { dt: 11, name: 'Fred', section: 'flute', rsvp: -1 },
+    { dt: 11, name: 'Gabby', section: 'guitar', rsvp: 1 },
+    { dt: 11, name: 'Hera', section: 'harp', rsvp: -1 },
   ]);
   expect(count).toEqual({ yes: 3, no: 2, maybe: 1 });
 });
@@ -51,12 +51,12 @@ test('tallies empty responses', () => {
 
 test('tallies responses from one section', () => {
   const rsvps = [
-    { name: 'Adlai', section: 'alto', rsvp: 1 },
-    { name: 'Alice', section: 'alto', rsvp: 1 },
-    { name: 'Ann', section: 'alto', rsvp: 1 },
-    { name: 'Apu', section: 'alto', rsvp: 0 },
-    { name: 'Arnie', section: 'alto', rsvp: 0 },
-    { name: 'Astro', section: 'alto', rsvp: -1 },
+    { dt: 11, name: 'Adlai', section: 'alto', rsvp: 1 },
+    { dt: 11, name: 'Alice', section: 'alto', rsvp: 1 },
+    { dt: 11, name: 'Ann', section: 'alto', rsvp: 1 },
+    { dt: 11, name: 'Apu', section: 'alto', rsvp: 0 },
+    { dt: 11, name: 'Arnie', section: 'alto', rsvp: 0 },
+    { dt: 11, name: 'Astro', section: 'alto', rsvp: -1 },
   ];
   const tally = tallyBySection(rsvps);
   expect(tally).toEqual([{

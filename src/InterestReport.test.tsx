@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ReplaySubject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { InterestResponse } from './aggregate';
 import { InterestReport } from './InterestReport';
 
@@ -20,7 +20,7 @@ test('renders empty responses', () => {
   const props = {
     time: 'Fri, May 13, 2022 4:15 pm (60m)',
     hideF: () => {},
-    responses: new ReplaySubject<Array<InterestResponse>>(1),
+    responses: new BehaviorSubject([] as Array<InterestResponse>),
   };
 
   render(<InterestReport {...props}/>);
@@ -29,12 +29,12 @@ test('renders empty responses', () => {
 });
 
 test('renders two sections of responses', () => {
-  const responses = new ReplaySubject<Array<InterestResponse>>(1);
+  const responses = new BehaviorSubject([] as Array<InterestResponse>);
   responses.next([
-      { name: 'Bill', section: 'Bass', rsvp: 0 },
-      { name: 'Bob', section: 'Bass', rsvp: 1 },
-      { name: 'Steve', section: 'Soprano', rsvp: -1 },
-      { name: 'Sue', section: 'Soprano', rsvp: 1 },
+      { dt: 11, name: 'Bill', section: 'Bass', rsvp: 0 },
+      { dt: 11, name: 'Bob', section: 'Bass', rsvp: 1 },
+      { dt: 11, name: 'Steve', section: 'Soprano', rsvp: -1 },
+      { dt: 11, name: 'Sue', section: 'Soprano', rsvp: 1 },
   ]);
   const props = {
     time: 'Fri, May 13, 2022 4:15 pm (60m)',
