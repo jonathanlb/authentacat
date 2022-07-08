@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 
 import './EventCard.css';
 import { InterestResponse } from './aggregate';
@@ -34,10 +34,52 @@ export type EventCardProps = {
   showAdmin?: boolean,
 };
 
+/**
+ * Break up the Observable of responses by dateTimeId and return the subscription to clean up.
+ */
+export function mapDateTimesToResponses(
+  dts: Array<DateTimeInterestProps>,
+  irs: Observable<Array<InterestResponse>>,
+  )
+: [Map<number, Observable<Array<InterestResponse>>>, Subscription] {
+  const result = new Map<number, Subject<Array<InterestResponse>>>();
+  dts.forEach(dt => result.set(dt.id, new BehaviorSubject<Array<InterestResponse>>([])));
+
+  const sub = irs.subscribe(irArr => {
+    const updates = new Map<number, Array<InterestResponse>>();
+    irArr.forEach(ir => {
+      const id = ir.dt;
+      let ar = updates.get(id);
+      if (ar === undefined) {
+        updates.set(id, [ir]);
+      } else {
+        ar.push(ir);
+      }
+    });
+
+    updates.forEach(
+      (irs: Array<InterestResponse>, dt: number) =>
+        result.get(dt)?.next(irs));
+  });
+
+  return [result, sub];
+}
+
 export function EventCard(props: EventCardProps) {
   debug('render');
   const [ showInterestReportId, setShowInterestReportId ] = useState(0);
   const [ dateTimeInterest, setDateTimeInterest ] = useState('');
+
+  const [responses, irSub ] = mapDateTimesToResponses(
+    props.dateTimes, props.interestResponse);
+
+  // clean up interest-response subscription on unmount
+  useEffect(() => {
+    return () => {
+      debug('unmount and unsubscribe');
+      irSub.unsubscribe();
+    }
+  });
 
   function handleShowInterestReport(dt: DateTimeInterestProps) {
     setShowInterestReportId(dt.id);
@@ -48,9 +90,6 @@ export function EventCard(props: EventCardProps) {
     setShowInterestReportId(0);
   }
 
-  const responses = new Map<number, Observable<Array<InterestResponse>>>();
-  props.dateTimes.forEach(dt => 
-    responses.set(dt.id, props.interestResponse));
 
   return(
     <Card className="EventCard" raised={true}>
