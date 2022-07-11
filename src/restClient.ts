@@ -12,6 +12,16 @@ export class RestClient {
     this.serverName = config.serverName;
   }
 
+  async fetchJson(url: string): Promise<any> {
+    return fetch(url, this.fetchOpts())
+      .then(resp => {
+        if (resp.status !== 200) {
+          throw new Error(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);
+        }
+        return resp.json();
+      });
+  }
+
   fetchOpts(): any {
     return {
       headers: {

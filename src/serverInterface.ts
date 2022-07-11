@@ -57,12 +57,7 @@ export class ServerImpl extends RestClient {
   private async eventId2CardProp(eventId: number): Promise<EventCardProps> {
     const url = `${this.serverName}/event/get/${eventId}`;
     debug('eventId2CardProp', url);
-    const response = await fetch(url, this.fetchOpts()); 
-    debug('event/get response', response);
-    if (response.status !== 200) {
-      return Promise.reject(new Error(`status: ${response.status}`));
-    }
-    const eventDesc = await response.json();
+    const eventDesc = await this.fetchJson(url);  
     debug('event description', eventDesc);
     const dts = this.getEventTally(
       eventDesc.dateTime ? [ eventDesc.dateTime ] : eventDesc.dateTimes);
@@ -83,12 +78,7 @@ export class ServerImpl extends RestClient {
   private async getEventIds(): Promise<Array<number>> {
     const url = `${this.serverName}/event/list`;
     debug('getEventIds', url);
-    const response = await fetch(url, this.fetchOpts()); 
-    debug('event/list response', response);
-    if (response.status !== 200) {
-      return Promise.reject(new Error(`status: ${response.status}`));
-    }
-    const eventIds = await response.json();
+    const eventIds = await this.fetchJson(url);
     debug('eventIds', eventIds);
     return eventIds;
   }
@@ -112,13 +102,7 @@ export class ServerImpl extends RestClient {
       const p = new Promise<VenueCardProps>(async (resolve, reject) => {
         const url = `${this.serverName}/venue/get/${venueId}`;
         debug('getVenue', url);
-        const response = await fetch(url, this.fetchOpts()); 
-        if (response.status !== 200) {
-          reject(new Error(`getVenue status: ${response.status}`));
-          return;
-        }
-
-        const jsonResp = await response.json();
+        const jsonResp = await this.fetchJson(url);
         resolve({ address: jsonResp.address, name: jsonResp.name });
       });
       this.venues.set(venueId, p);

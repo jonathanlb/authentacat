@@ -25,12 +25,8 @@ export class UserDirectory extends RestClient {
     let u = this.userInfo.get(id);
     if (u === undefined) {
       const url = `${this.serverName}/user/get/${id}`;
-      const response = await fetch(url, this.fetchOpts());
-      if (response.status !== 200) {
-        throw new Error(`cannot fetch user info: ${response.status} "${response.statusText}"`);
-      }
-      const j = await response.json();
-      debug('fetch', id, j);
+      const j = await this.fetchJson(url);
+      debug('fetched', id, j);
       u = { name: j.name, section: j.section };
       this.userInfo.set(id, u);
     }

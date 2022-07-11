@@ -30,29 +30,23 @@ export class RsvpReportCollector extends RestClient {
 
       const url = `${this.serverName}/event/detail/${eventId}`;
       debug('get details', url);
-      fetch(url, this.fetchOpts())
-        .then(resp => {
-        if (resp.status !== 200) {
-          throw new Error(`No details from server: ${resp.status} ${resp.statusText}`);
-        }     
-        return resp.json();
-      })
-      .then(async (rsvps) => {
-        const arr = [] as Array<InterestResponse>;
-        for (const [dt, userRsvps] of Object.entries(rsvps)) {
-          const dtId = Number(dt);
-          for (const [uid, rsvp] of Object.entries(userRsvps as any)) {
-            const userInfo = await this.userDirectory.getUserInfo(Number(uid));
-            arr.push({
-              dt: dtId,
-              name: userInfo.name,
-              section: userInfo.section,
-              rsvp: Number(rsvp),
-            });
+      this.fetchJson(url)
+        .then(async (rsvps) => {
+          const arr = [] as Array<InterestResponse>;
+          for (const [dt, userRsvps] of Object.entries(rsvps)) {
+            const dtId = Number(dt);
+            for (const [uid, rsvp] of Object.entries(userRsvps as any)) {
+              const userInfo = await this.userDirectory.getUserInfo(Number(uid));
+              arr.push({
+                dt: dtId,
+                name: userInfo.name,
+                section: userInfo.section,
+                rsvp: Number(rsvp),
+              });
+            }
           }
-        }
-        (responses as BehaviorSubject<Array<InterestResponse>>).next(arr);
-      });
+          (responses as BehaviorSubject<Array<InterestResponse>>).next(arr);
+        });
     }
     return responses as Observable<Array<InterestResponse>>;
   }

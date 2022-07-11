@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { RestClient } from './restClient';
 import { RsvpCount } from './aggregate';
@@ -29,35 +29,26 @@ export class InterestReporter extends RestClient {
    * Retrieve the aggregate rsvp count for the dateTime, scheduling the retrieval of other
    * dateTimes of the same event.
    */
-  getDateTimeInterestCount(eventId: number, dtId: number): BehaviorSubject<RsvpCount> {
+  getDateTimeInterestCount(eventId: number, dtId: number): Observable<RsvpCount> {
     let dtic = this.rsvpCounts.get(dtId);
     if (dtic !== undefined) {
       return dtic;
     }
+    dtic = new BehaviorSubject({yes: 0, no: 0, maybe: 0});
+    this.rsvpCounts.set(dtId, dtic);
 
     let counts = this.rsvpCountQueries.get(eventId);
     if (counts !== undefined) {
-      dtic = counts.get(dtId);
-      if (dtic === undefined) {
-        dtic = new BehaviorSubject({yes: 0, no: 0, maybe: 0});
-        counts.set(dtId, dtic);
-      }
+      counts.set(dtId, dtic);
       return dtic;
     }
 
-    dtic = new BehaviorSubject({yes: 0, no: 0, maybe: 0});
     counts = new Map();
     counts.set(dtId, dtic);
     this.rsvpCountQueries.set(eventId, counts);
 
     const url = `${this.serverName}/event/summary/${eventId}`;
-    fetch(url, this.fetchOpts())
-      .then(resp => {
-        if (resp.status !== 200) {
-          throw new Error(`Cannot retrieve rsvps from server: ${resp.status} ${resp.statusText}`);
-        }
-        return resp.json();
-      })
+    this.fetchJson(url)
       .then(obj => { // dateTime -> 0/1 -> count
         debug('rsvps count', obj);
         Object.entries(obj).forEach(kv => {
