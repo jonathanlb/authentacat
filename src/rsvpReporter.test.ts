@@ -43,5 +43,5 @@ test('rsvpReporter fetches', done => {
     if (count >= 2) { done(); }
   });
 
-
+  r.release();
 }, 1500);

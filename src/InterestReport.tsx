@@ -34,7 +34,8 @@ export function InterestReport(props: InterestReportProps) {
   }
 
   useEffect(() => {
-    props.responses.subscribe(setRsvps);
+    const sub = props.responses.subscribe(setRsvps);
+    return () => sub.unsubscribe();
   }, [ props.responses] );
 
   return(

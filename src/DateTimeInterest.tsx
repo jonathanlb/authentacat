@@ -40,11 +40,13 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
   const [ rsvpCount, setCount ] = useState(props.rsvpCount.getValue());
 
   useEffect(() => {
-    props.rsvp.subscribe(setRsvp);
+    const sub = props.rsvp.subscribe(setRsvp);
+    return () => sub.unsubscribe();
   }, [ props.rsvp ]);
 
   useEffect(() => {
-    props.rsvpCount.subscribe(setCount);
+    const sub = props.rsvpCount.subscribe(setCount);
+    return () => sub.unsubscribe();
   }, [ props.rsvpCount ]);
 
   function handleSlider(e: Event | number) {

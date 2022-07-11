@@ -1,5 +1,5 @@
 import Debug from 'debug';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { skip } from 'rxjs/operators';
 import { RestClient } from './restClient';
 
@@ -15,12 +15,18 @@ export type RsvpReporterConfig = {
  */
 export class RsvpReporter extends RestClient {
   rsvps: Map<number, BehaviorSubject<number>>;
+  rsvpSub?: Subscription;
   eventQueries: Map<number, Map<number, BehaviorSubject<number>>>;
 
   constructor(config: RsvpReporterConfig) {
     super(config);
     this.rsvps = new Map();
     this.eventQueries = new Map();
+  }
+
+  /** Clean up after use, say if the instance is used inside a component that unmounts. */
+  release() {
+    this.rsvpSub?.unsubscribe();
   }
 
   /** 
@@ -48,7 +54,7 @@ export class RsvpReporter extends RestClient {
     this.eventQueries.set(eventId, query);
 
     // wire up change to push user's response to server
-    rsvp.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
+    this.rsvpSub = rsvp.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
       const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${x}`;
       debug('rsvpPush', url);
       this.fetch(url); 
