@@ -12,8 +12,12 @@ export class RestClient {
     this.serverName = config.serverName;
   }
 
-  async fetchJson(url: string): Promise<any> {
+  async fetch(url: string): Promise<any> {
     return fetch(url, this.fetchOpts())
+  }
+
+  async fetchJson(url: string): Promise<any> {
+    return this.fetch(url)
       .then(resp => {
         if (resp.status !== 200) {
           throw new Error(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);

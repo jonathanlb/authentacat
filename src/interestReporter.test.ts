@@ -1,7 +1,6 @@
 import { InterestReporter } from './interestReporter';
 
-const ERR_400 = Promise.resolve(
-  { status: 400, statusText: 'access denied'}) as Promise<Response>;
+import { ERR_400, jsonResult } from './restClient.testutil';
 
 function buildQueryResult() {
   const result = {} as any;
@@ -22,14 +21,11 @@ test('interestReporter queries', done => {
 
   global.fetch = (url: RequestInfo, _opts?: RequestInit | undefined) => {
     const m = url.toString().match(/\/event\/summary\/11$/);
-    if (!m || m.length != 1) {
+    if (!m || m.length !== 1) {
       return ERR_400;
     }
 
-    return Promise.resolve({
-      status: 200,
-      json: () => Promise.resolve(buildQueryResult()),
-    }) as Promise<Response>;
+    return jsonResult(buildQueryResult());
   };
 
   const ir = new InterestReporter(config);
@@ -62,7 +58,7 @@ test('interestReporter queries, server provides extra', done => {
 
   global.fetch = (url: RequestInfo, _opts?: RequestInit | undefined) => {
     const m = url.toString().match(/\/event\/summary\/11$/);
-    if (!m || m.length != 1) {
+    if (!m || m.length !== 1) {
       return ERR_400;
     }
 

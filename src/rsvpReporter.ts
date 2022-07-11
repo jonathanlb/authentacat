@@ -51,18 +51,12 @@ export class RsvpReporter extends RestClient {
     rsvp.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
       const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${x}`;
       debug('rsvpPush', url);
-      fetch(url, this.fetchOpts()); 
+      this.fetch(url); 
     });
 
     const url = `${this.serverName}/event/rsvp/${eventId}`;
     debug('getEventRsvp', url);
-    fetch(url, this.fetchOpts())
-      .then(resp => {
-        if (resp.status !== 200) {
-          throw new Error(`Cannot rsvp to server: ${resp.status} ${resp.statusText}`);
-        }     
-        return resp.json();
-      })
+    this.fetchJson(url)
       .then(dtXr => {
         // inform others of the rsvp downloaded
         debug('gotEventRsvp', dtXr);
