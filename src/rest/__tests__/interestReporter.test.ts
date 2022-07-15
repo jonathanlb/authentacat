@@ -1,6 +1,6 @@
-import { InterestReporter } from './interestReporter';
+import { InterestReporter } from '../interestReporter';
 
-import { ERR_400, jsonResult } from './restClient.testutil';
+import { ERR_400, jsonResult } from '../restClient.testutil';
 
 function buildQueryResult() {
   const result = {} as any;

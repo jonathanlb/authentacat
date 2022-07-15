@@ -1,7 +1,7 @@
-import { RsvpReportCollector } from './rsvpReportCollector';
-import { UserDirectory } from './userDirectory';
+import { RsvpReportCollector } from '../rsvpReportCollector';
+import { UserDirectory } from '../userDirectory';
 
-import { ERR_400, jsonResult } from './restClient.testutil';
+import { ERR_400, jsonResult } from '../restClient.testutil';
 
 const EID = 11;
 const DID = 21;

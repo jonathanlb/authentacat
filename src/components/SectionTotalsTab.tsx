@@ -8,7 +8,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-import { tallyBySection, InterestResponse } from './aggregate';
+import { tallyBySection, InterestResponse } from '../aggregate';
 import { InterestIndicator } from './InterestIndicator';
 
 export type SectionTotalsTabProps = {

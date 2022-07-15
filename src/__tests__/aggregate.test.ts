@@ -1,4 +1,4 @@
-import { groupBy, summarizeResponses, tallyBySection } from './aggregate';
+import { groupBy, summarizeResponses, tallyBySection } from '../aggregate';
 
 test('groups empty list', () => {
   expect(groupBy([], 'some-key')).toEqual(new Map());

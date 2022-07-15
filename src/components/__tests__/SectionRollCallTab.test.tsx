@@ -1,6 +1,6 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { SectionRollCallTab } from './SectionRollCallTab';
+import { SectionRollCallTab } from '../SectionRollCallTab';
 
 test('renders empty section roll call tab', () => {
   const props = {

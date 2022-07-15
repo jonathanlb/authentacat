@@ -8,9 +8,9 @@ import { BehaviorSubject } from 'rxjs';
 
 import Card from '@mui/material/Card';
 
-import { AppHeader } from './AppHeader';
-import { EventContent } from './EventContent';
-import { ServerInterface } from './serverInterface';
+import { AppHeader } from './components/AppHeader';
+import { EventContent } from './components/EventContent';
+import { ServerInterface } from './rest/serverInterface';
 
 export type AppProps = {
   config: ServerInterface;

@@ -1,6 +1,6 @@
 import Debug from 'debug';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { InterestResponse } from './aggregate';
+import { InterestResponse } from '../aggregate';
 import { RestClient } from './restClient';
 import { UserDirectory } from './userDirectory';
 

@@ -1,6 +1,6 @@
-import { UserDirectory } from './userDirectory';
+import { UserDirectory } from '../userDirectory';
 
-import { ERR_400, jsonResult } from './restClient.testutil';
+import { ERR_400, jsonResult } from '../restClient.testutil';
 
 const UID = 31;
 

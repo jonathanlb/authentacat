@@ -1,6 +1,6 @@
-import { RsvpReporter } from './rsvpReporter';
+import { RsvpReporter } from '../rsvpReporter';
 
-import { ERR_400, OK_200, jsonResult } from './restClient.testutil';
+import { ERR_400, OK_200, jsonResult } from '../restClient.testutil';
 
 const EID = 11;
 const DID = 21;

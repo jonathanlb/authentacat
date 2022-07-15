@@ -3,13 +3,13 @@ import { Auth } from '@aws-amplify/auth';
 import Debug from 'debug';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { DateTimeInterestProps } from './DateTimeInterest';
-import { EventCardProps } from './EventCard';
+import { DateTimeInterestProps } from '../components/DateTimeInterest';
+import { EventCardProps } from '../components/EventCard';
 import { InterestReporter } from './interestReporter';
 import { RestClient } from './restClient';
 import { RsvpReportCollector } from './rsvpReportCollector';
 import { RsvpReporter } from './rsvpReporter';
-import { VenueCardProps } from './VenueCard';
+import { VenueCardProps } from '../components/VenueCard';
 import { UserDirectory } from './userDirectory';
 
 const debug = Debug('rsvp:control');

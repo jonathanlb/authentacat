@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { SectionTotalsTab } from './SectionTotalsTab';
+import { SectionTotalsTab } from '../SectionTotalsTab';
 
 test('renders empty section totals tab', () => {
   const props = {

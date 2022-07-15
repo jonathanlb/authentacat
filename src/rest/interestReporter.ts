@@ -2,7 +2,7 @@ import Debug from 'debug';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { RestClient } from './restClient';
-import { RsvpCount } from './aggregate';
+import { RsvpCount } from '../aggregate';
 
 const debug = Debug('rsvp:interst');
 const errors = Debug('rsvp:interst:error');

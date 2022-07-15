@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BehaviorSubject } from 'rxjs';
-import { InterestResponse } from './aggregate';
-import { InterestReport } from './InterestReport';
+import { InterestResponse } from '../../aggregate';
+import { InterestReport } from '../InterestReport';
 
 let container: any;
 

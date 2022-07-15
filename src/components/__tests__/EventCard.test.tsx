@@ -2,8 +2,8 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BehaviorSubject, Subject } from 'rxjs';
 
-import { InterestResponse } from './aggregate';
-import { EventCard, mapDateTimesToResponses } from './EventCard';
+import { InterestResponse } from '../../aggregate';
+import { EventCard, mapDateTimesToResponses } from '../EventCard';
 
 const venue = {
   name: 'Birdland',

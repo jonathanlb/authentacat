@@ -11,8 +11,8 @@ import ThumbDown from '@mui/icons-material/ThumbDown';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 
 import './DateTimeInterest.css';
-import { RsvpCount } from './aggregate';
-import { formatDate, formatTime } from './dateTime';
+import { RsvpCount } from '../aggregate';
+import { formatDate, formatTime } from '../dateTime';
 import { InterestIndicator } from './InterestIndicator';
 
 import Debug from 'debug';

@@ -1,8 +1,8 @@
 import { BehaviorSubject, Observable } from 'rxjs';
 
 import { InterestResponse, summarizeResponses } from './aggregate';
-import { EventCardProps } from './EventCard';
-import { ServerInterface } from './serverInterface';
+import { EventCardProps } from './components/EventCard';
+import { ServerInterface } from './rest/serverInterface';
 
 import Debug from 'debug';
 

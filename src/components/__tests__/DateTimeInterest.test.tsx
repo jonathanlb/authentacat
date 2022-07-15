@@ -1,8 +1,8 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BehaviorSubject } from 'rxjs';
-import './mockSlider';
-import { DateTimeInterest } from './DateTimeInterest';
+import '../mockSlider';
+import { DateTimeInterest } from '../DateTimeInterest';
 
 test('date time interest renders', () => {
   const props = {

@@ -6,7 +6,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 
-import { groupBy, InterestResponse } from './aggregate';
+import { groupBy, InterestResponse } from '../aggregate';
 import { RollCallTab } from './RollCallTab';
 import { TabPanel } from './TabBoiler';
 

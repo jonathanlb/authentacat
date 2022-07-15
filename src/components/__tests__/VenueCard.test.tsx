@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { VenueCard } from './VenueCard';
+import { VenueCard } from '../VenueCard';
 
 test('renders venue card', () => {
   const props = {

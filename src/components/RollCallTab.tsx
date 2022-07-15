@@ -5,7 +5,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import Typography from '@mui/material/Typography';
 
-import { InterestResponse } from './aggregate';
+import { InterestResponse } from '../aggregate';
 
 export type RollCallTabProps = {
   rsvps: Array<InterestResponse>,

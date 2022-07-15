@@ -1,4 +1,4 @@
-import { ServerImpl, ServerInterface } from './serverInterface';
+import { ServerImpl, ServerInterface } from './rest/serverInterface';
 
 const config = {
   serverName: 'http://192.168.1.22:8989',

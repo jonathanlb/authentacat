@@ -3,9 +3,9 @@ import { act } from 'react-dom/test-utils';
 import { render, screen } from '@testing-library/react';
 import { Subject } from 'rxjs';
 
-import { InterestResponse } from './aggregate';
-import { EventCardProps } from './EventCard';
-import { EventContent } from './EventContent';
+import { InterestResponse } from '../../aggregate';
+import { EventCardProps } from '../EventCard';
+import { EventContent } from '../EventContent';
 
 const venue = {
   name: 'The break room',

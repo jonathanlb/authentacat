@@ -13,7 +13,7 @@ import { Observable } from 'rxjs';
 
 import './InterestReport.css';
 
-import { InterestResponse } from './aggregate';
+import { InterestResponse } from '../aggregate';
 import { RollCallTab } from './RollCallTab';
 import { SectionRollCallTab } from './SectionRollCallTab';
 import { SectionTotalsTab } from './SectionTotalsTab';
