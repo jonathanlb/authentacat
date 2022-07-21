@@ -5,7 +5,7 @@ import { RestClient } from './restClient';
 import { RsvpCount } from '../aggregate';
 
 const debug = Debug('rsvp:interst');
-const errors = Debug('rsvp:interst:error');
+// const errors = Debug('rsvp:interst:error');
 
 export type InterestReporterOpts = {
   accessToken?: string;

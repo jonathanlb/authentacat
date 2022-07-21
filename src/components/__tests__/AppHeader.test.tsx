@@ -1,13 +1,14 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { AppHeader } from '../AppHeader';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 test('app header renders', () => {
   const filter = new Subject<string>();
   const props = {
     filter: filter,
     homeHref: 'https://example.com',
+    listAllEvents: new BehaviorSubject(false),
     logoImageSrc: 'imgs/logo.png',
     logoImageSrcAlt: 'logo goes here',
     signOut: (_data: any) => { },
@@ -30,6 +31,7 @@ test('app header forwards along filter events', done => {
   const props = {
     filter: filter,
     homeHref: 'https://example.com',
+    listAllEvents: new BehaviorSubject(false),
     logoImageSrc: 'imgs/logo.png',
     signOut: (_data: any) => { },
     userName: 'Francisca Gonzaga',

@@ -47,3 +47,23 @@ export function formatTime(hhmm: string): string {
   }
   return `${hour4Str}:${mm} ${hour < 12 ? 'am' : 'pm'}`;
 }
+
+export function lastYear(dOpt?: Date): string {
+  const d = dOpt || new Date();
+  // Javascript isn't sensitive to 2/28 on non-leapyears.
+  d.setFullYear(d.getFullYear() - 1);
+  return today(d);
+}
+
+export function today(dOpt?: Date): string {
+  const d = dOpt || new Date();
+  let mm: string | number = d.getMonth()+1;
+  if (mm < 10) {
+    mm = `0${mm}`;
+  }
+  let dd: string | number = d.getDate();
+  if (dd < 10) {
+    dd = `0${dd}`;
+  }
+  return `${d.getFullYear()}${mm}${dd}`;
+}

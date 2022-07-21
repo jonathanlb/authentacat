@@ -1,7 +1,12 @@
-import { Observer } from 'rxjs';
+import { useState } from 'react';
+import Debug from 'debug';
+import { BehaviorSubject, Observer } from 'rxjs';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import FormControl from '@mui/material/FormControl';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
@@ -11,9 +16,12 @@ import Search from '@mui/icons-material/Search';
 
 import './AppHeader.css';
 
+const debug = Debug('rsvp:AppHeader');
+
 export type AppHeaderProps = {
   filter: Observer<string>;
   homeHref: string;
+  listAllEvents: BehaviorSubject<boolean>;
   logoImageSrc: string
   logoImageSrcAlt?: string;
   signOut?: (data: any) => void;
@@ -21,6 +29,19 @@ export type AppHeaderProps = {
 }
 
 export function AppHeader(props: AppHeaderProps) {
+  const [listAllEvents, setListAllEvents ] = useState(
+    props.listAllEvents.getValue());
+
+  function updateListAllEvents(e: any) {
+    const newValue = e.target.checked;
+    debug('updateListAllEvents', listAllEvents, newValue);
+    if (newValue !== listAllEvents) {
+      localStorage['listAllEvents'] = newValue;
+      props.listAllEvents.next(listAllEvents);
+      setListAllEvents(newValue);
+    }
+  }
+
   return (
     <Box className="AppHeader">
       <a href={props.homeHref}>
@@ -39,13 +60,27 @@ export function AppHeader(props: AppHeaderProps) {
           onChange={ e => props.filter.next(e.target.value) } />
       </Tooltip>
 
-      <Tooltip title="Logout">
-      <Button className="AppHeaderButton" 
-        aria-label="logout button"
-        onClick={props.signOut}>
-        <Logout/>
-      </Button>
-      </Tooltip>
+      <Box sx={{ margin: '3%', padding: '1%', border: '1px solid grey', borderRadius: '5px', display: 'flex', flexDirection: 'column' }}>
+        <Tooltip title="Logout">
+          <Button className="AppHeaderButton" 
+            aria-label="logout button"
+            onClick={props.signOut}>
+            <Logout/>
+          </Button>
+        </Tooltip>
+
+        <FormControl>
+          <FormControlLabel
+            control={
+              <Switch checked={listAllEvents }
+                onChange={updateListAllEvents}
+                />
+            }
+            label={listAllEvents ? 'All events' : 'Active events' }
+            />
+        </FormControl>
       </Box>
+
+    </Box>
   );
 }

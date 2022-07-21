@@ -235,13 +235,19 @@ const events: Array<EventCardProps> = [
 
 export function newDemoConfig(): ServerInterface {
   const eventCards = new BehaviorSubject([] as Array<EventCardProps>);
+  const listAllEvents = new BehaviorSubject(false);
 
   return {
     eventCards,
-    start: () => {
-      debug('start');
-      eventCards.next(events);
-      return Promise.resolve();
+    listAllEvents,
+    start: (stopOnError: (err: any) => void) => {
+      try {
+        debug('start');
+        eventCards.next(events);
+      } catch (err) {
+        stopOnError(err);
+      }
+      return Promise.resolve(() => debug('stopping'));
     },
   };
 }

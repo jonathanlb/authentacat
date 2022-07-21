@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 
 import { DateTimeInterestProps } from '../components/DateTimeInterest';
 import { EventCardProps } from '../components/EventCard';
+import { lastYear, today } from '../dateTime';
 import { InterestReporter } from './interestReporter';
 import { RestClient } from './restClient';
 import { RsvpReportCollector } from './rsvpReportCollector';
@@ -13,17 +14,19 @@ import { VenueCardProps } from '../components/VenueCard';
 import { UserDirectory } from './userDirectory';
 
 const debug = Debug('rsvp:control');
-const errors = Debug('rsvp:control:error');
+// const errors = Debug('rsvp:control:error');
 
 export type ServerImplOpts = {
   accessToken?: string;
+  listAllEvents: Observable<boolean>;
   serverName: string;
 }
 
 export type ServerInterface = {
   eventCards: Observable<Array<EventCardProps>>;
+  listAllEvents: Observable<boolean>;
 
-  start: () => Promise<void>;
+  start: (stopOnError: (err: any) => void) => Promise<() => void>; // return a cleanup function
 };
 
 /**
@@ -32,8 +35,10 @@ export type ServerInterface = {
 export class ServerImpl extends RestClient {
   eventCards: BehaviorSubject<Array<EventCardProps>>;
   interestReporter: InterestReporter;
+  listAllEvents: Observable<boolean>;
   rsvpCollector: RsvpReportCollector;
   rsvpReporter: RsvpReporter;
+  stopped: boolean;
   userDirectory: UserDirectory;
   venues: Map<number, Promise<VenueCardProps>>;
 
@@ -42,11 +47,13 @@ export class ServerImpl extends RestClient {
     this.eventCards = new BehaviorSubject([] as Array<EventCardProps>);
     this.userDirectory = new UserDirectory(config);
     this.interestReporter = new InterestReporter(config);
+    this.listAllEvents = config.listAllEvents;
     this.rsvpCollector = new RsvpReportCollector({
       serverName: this.serverName,
       userDirectory: this.userDirectory,
     });
     this.rsvpReporter = new RsvpReporter(config);
+    this.stopped = false;
     this.venues = new Map();
     debug('init');
   }
@@ -75,8 +82,10 @@ export class ServerImpl extends RestClient {
   /**
    * Retrieve all of the available event id numbers.
    */
-  private async getEventIds(): Promise<Array<number>> {
-    const url = `${this.serverName}/event/list`;
+  private async getEventIds(listAllEvents: boolean): Promise<Array<number>> {
+    const url = listAllEvents ?
+      `${this.serverName}/event/listafter/${lastYear()}` : // arbitrary limit on events
+      `${this.serverName}/event/listafter/${today()}`;
     debug('getEventIds', url);
     const eventIds = await this.fetchJson(url);
     debug('eventIds', eventIds);
@@ -112,18 +121,34 @@ export class ServerImpl extends RestClient {
     return this.venues.get(venueId) as Promise<VenueCardProps>;
   }
 
-  async start(): Promise<void> {
+  async start(stopOnError: (err: any) => void): Promise<() => void> {
+    this.stopped = false;
     const session = await Auth.currentSession();
     this.accessToken = session.getIdToken().getJwtToken();
     this.interestReporter.accessToken = this.accessToken;
     this.rsvpCollector.accessToken = this.accessToken;
     this.rsvpReporter.accessToken = this.accessToken;
     this.userDirectory.accessToken = this.accessToken;
-    const ids = await this.getEventIds();
-    const result = await Promise.all<EventCardProps>(
-      ids.map((id: number) => this.eventId2CardProp(id))); // XXX catch error
-    this.eventCards.next(result);
-    debug(`pushed ${result.length} event cards`);
-    return Promise.resolve();
+
+    const listAllSub = this.listAllEvents.subscribe(
+      async (listAllEvents: boolean) => {
+        try {
+          const ids = await this.getEventIds(listAllEvents);
+          const result = await Promise.all<EventCardProps>(
+            ids.map((id: number) => this.eventId2CardProp(id))); // XXX catch error
+          this.eventCards.next(result);
+          debug(`pushed ${result.length} event cards`);
+        } catch (err) {
+          listAllSub.unsubscribe();
+          // try to limit alerting user... still alerts x2...
+          if (!this.stopped) {
+            this.stopped = true;
+            stopOnError(err);
+          }
+        }
+      }
+    );
+    
+    return () => listAllSub.unsubscribe();
   }
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BehaviorSubject } from 'rxjs';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -13,8 +14,10 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = false;
+const listAllEvents = new BehaviorSubject(localStorage['listAllEvents'] === true);
 const appProps = {
-  config: demoMode ? newDemoConfig() : newConfig(),
+  config: demoMode ? newDemoConfig() : newConfig({listAllEvents}),
+  listAllEvents: listAllEvents,
 };
 
 const root = ReactDOM.createRoot(
