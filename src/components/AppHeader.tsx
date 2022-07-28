@@ -37,7 +37,7 @@ export function AppHeader(props: AppHeaderProps) {
     debug('updateListAllEvents', listAllEvents, newValue);
     if (newValue !== listAllEvents) {
       localStorage['listAllEvents'] = newValue;
-      props.listAllEvents.next(listAllEvents);
+      props.listAllEvents.next(newValue);
       setListAllEvents(newValue);
     }
   }

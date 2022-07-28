@@ -14,7 +14,7 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = false;
-const listAllEvents = new BehaviorSubject(localStorage['listAllEvents'] === true);
+const listAllEvents = new BehaviorSubject(localStorage['listAllEvents'] === 'true');
 const appProps = {
   config: demoMode ? newDemoConfig() : newConfig({listAllEvents}),
   listAllEvents: listAllEvents,
