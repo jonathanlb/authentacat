@@ -57,7 +57,7 @@ export class RsvpReporter extends RestClient {
     this.rsvpSub = rsvp.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
       const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${x}`;
       debug('rsvpPush', url);
-      this.fetch(url); 
+      this.fetch(url); // XXX catch error
     });
 
     const url = `${this.serverName}/event/rsvp/${eventId}`;
@@ -76,7 +76,7 @@ export class RsvpReporter extends RestClient {
             s.next(r);
           }
         });
-      }); 
+      }); // XXX catch error
 
     return rsvp;
   }

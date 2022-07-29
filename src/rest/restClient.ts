@@ -12,6 +12,15 @@ export class RestClient {
     this.serverName = config.serverName;
   }
 
+  /**
+   * Ensure the fetch operation has the proper headers.
+   * Unfortunetely, errors thrown here don't always have enough information to 
+   * forward along to be properly handled. 
+   * For example, if the server rate limits the client.
+   * A curl request to the rate-limited server has a message of 
+   *   "Too many requests, please try again later."
+   * but fetch seems to frequently lose, burying the CORS error.
+   */
   async fetch(url: string): Promise<any> {
     return fetch(url, this.fetchOpts())
   }

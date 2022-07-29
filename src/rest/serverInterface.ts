@@ -14,7 +14,7 @@ import { VenueCardProps } from '../components/VenueCard';
 import { UserDirectory } from './userDirectory';
 
 const debug = Debug('rsvp:control');
-// const errors = Debug('rsvp:control:error');
+const errors = Debug('rsvp:control:error');
 
 export type ServerImplOpts = {
   accessToken?: string;
@@ -138,7 +138,9 @@ export class ServerImpl extends RestClient {
             ids.map((id: number) => this.eventId2CardProp(id))); // XXX catch error
           this.eventCards.next(result);
           debug(`pushed ${result.length} event cards`);
-        } catch (err) {
+        } catch (err: any) {
+          errors('cannot fetch events', err);
+          errors(err.message);
           listAllSub.unsubscribe();
           // try to limit alerting user... still alerts x2...
           if (!this.stopped) {

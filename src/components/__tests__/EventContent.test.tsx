@@ -1,7 +1,7 @@
 import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { render, screen } from '@testing-library/react';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 import { InterestResponse } from '../../aggregate';
 import { EventCardProps } from '../EventCard';
@@ -14,10 +14,12 @@ const venue = {
 
 test('event content renders', () => {
   const cards = new Subject<Array<EventCardProps>>();
+  const latestEventFirst = new BehaviorSubject(true);
 
   const props = {
     eventCards: cards,
     filter: new Subject<string>(),
+    latestEventFirst,
   };
 
   render(<EventContent {...props}/>);
@@ -37,10 +39,12 @@ test('event content renders', () => {
 test('event content filters', () => {
   const cards = new Subject<Array<EventCardProps>>();
   const filter = new Subject<string>();
+  const latestEventFirst = new BehaviorSubject(true);
 
   const props = {
     eventCards: cards,
     filter: filter,
+    latestEventFirst,
   };
 
   render(<EventContent {...props}/>);

@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import { Observable, Subscription } from 'rxjs';
+import Debug from 'debug';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
 import { EventCard, EventCardProps } from './EventCard';
@@ -10,17 +11,38 @@ import { EventCard, EventCardProps } from './EventCard';
 export type EventContentProps = {
   eventCards: Observable<Array<EventCardProps>>;
   filter: Observable<string>;
+  latestEventFirst: BehaviorSubject<boolean>; // getValue only here
 };
 
+// const debug = Debug('rsvp:component:eventContent');
+
+// fade transition only applies to filtered event cards, not reordered or just loaded
 const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';
+
+function isCardVisible(ec: EventCardProps, filter: string): boolean {
+  return ec.name.toLowerCase().includes(filter) ||
+    ec.venue.name.toLowerCase().includes(filter);
+}
+
+function sortEventCards(ecs: Array<EventCardProps>, latestFirst: boolean)
+  : Array<EventCardProps> {
+  const order = latestFirst ? -1 : 1;
+  ecs.sort((a, b) => { // print latest events first
+    return order * (a.dateTimes[0]?.yyyymmdd || '').localeCompare(
+      b.dateTimes[0].yyyymmdd || '');
+  });
+  return ecs;
+}
 
 export function EventContent(props: EventContentProps) {
   const [ eventCards, setEventCards ] = useState([] as Array<EventCardProps>);
   const [ filter, setFilter ] = useState('');
   const [ showRsvpDetails, setShowRsvpDetails ] = useState(false);
+  const [ latestEventFirst, setLatestEventFirst ] = useState(props.latestEventFirst.getValue());
 
   useEffect(() => {
     const ecSub = props.eventCards.subscribe(setEventCards);
+
     // Listen for changes in interest response
     let irSub: Array<Subscription> = [];
     const irCardSub = props.eventCards.pipe(take(2)).subscribe((eventCards) => {
@@ -31,21 +53,17 @@ export function EventContent(props: EventContentProps) {
       }));
     });
 
+    const filterSub = props.filter.subscribe(updateCardVisibility);
+    const latestSub = props.latestEventFirst.subscribe(setLatestEventFirst);
+
     return function cleanup() {
       ecSub.unsubscribe();
+      filterSub.unsubscribe();
       irCardSub.unsubscribe();
       irSub.forEach(s => s.unsubscribe());
+      latestSub.unsubscribe();
     }
-  }, [ props.eventCards ]);
-
-  useEffect(() => {
-    props.filter.subscribe(updateCardVisibility);
-  }, [ props.filter ]);
-
-  function isCardVisible(ec: EventCardProps, filter: string): boolean {
-    return ec.name.toLowerCase().includes(filter) ||
-      ec.venue.name.toLowerCase().includes(filter);
-  }
+  }, [ props.eventCards, props.filter, props.latestEventFirst ]);
 
   function updateCardVisibility(filterStr: string) {
     const trimmedFilter = filterStr.trim().toLowerCase();
@@ -54,7 +72,7 @@ export function EventContent(props: EventContentProps) {
 
   return (
     <Box>
-      { eventCards
+      { sortEventCards([...eventCards], latestEventFirst)
           .map((eventConfig: EventCardProps, i: number) =>
             <Box data-testid={`eventCard_${i}`}
               sx={isCardVisible(eventConfig, filter) ?

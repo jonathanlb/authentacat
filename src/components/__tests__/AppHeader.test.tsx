@@ -8,6 +8,7 @@ test('app header renders', () => {
   const props = {
     filter: filter,
     homeHref: 'https://example.com',
+    latestEventFirst: new BehaviorSubject(true),
     listAllEvents: new BehaviorSubject(false),
     logoImageSrc: 'imgs/logo.png',
     logoImageSrcAlt: 'logo goes here',
@@ -31,6 +32,7 @@ test('app header forwards along filter events', done => {
   const props = {
     filter: filter,
     homeHref: 'https://example.com',
+    latestEventFirst: new BehaviorSubject(true),
     listAllEvents: new BehaviorSubject(false),
     logoImageSrc: 'imgs/logo.png',
     signOut: (_data: any) => { },

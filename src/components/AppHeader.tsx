@@ -21,6 +21,7 @@ const debug = Debug('rsvp:AppHeader');
 export type AppHeaderProps = {
   filter: Observer<string>;
   homeHref: string;
+  latestEventFirst: BehaviorSubject<boolean>;
   listAllEvents: BehaviorSubject<boolean>;
   logoImageSrc: string
   logoImageSrcAlt?: string;
@@ -29,8 +30,21 @@ export type AppHeaderProps = {
 }
 
 export function AppHeader(props: AppHeaderProps) {
+  const [latestEventFirst, setLatestEventFirst ] = useState(
+    props.latestEventFirst.getValue());
+
   const [listAllEvents, setListAllEvents ] = useState(
     props.listAllEvents.getValue());
+
+  function updateLatestEventFirst(e: any) {
+    const newValue = e.target.checked;
+    debug('updateLatestEventFirst', latestEventFirst, newValue);
+    if (newValue !== latestEventFirst) {
+      localStorage['latestEventFirst'] = newValue;
+      props.latestEventFirst.next(newValue);
+      setLatestEventFirst(newValue);
+    }
+  }
 
   function updateListAllEvents(e: any) {
     const newValue = e.target.checked;
@@ -79,6 +93,18 @@ export function AppHeader(props: AppHeaderProps) {
             label={listAllEvents ? 'All events' : 'Active events' }
             />
         </FormControl>
+
+        <FormControl>
+          <FormControlLabel
+            control={
+              <Switch checked={latestEventFirst}
+                onChange={updateLatestEventFirst}
+                />
+            }
+            label={latestEventFirst ? 'Latest first' : 'Oldest first' }
+            />
+        </FormControl>
+
       </Box>
 
     </Box>

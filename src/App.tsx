@@ -17,6 +17,7 @@ import { ServerInterface } from './rest/serverInterface';
 
 export type AppProps = {
   config: ServerInterface;
+  latestEventFirst: BehaviorSubject<boolean>;
   listAllEvents: BehaviorSubject<boolean>;
 }
 
@@ -41,12 +42,16 @@ function App(props: AppProps) {
           <Card className="App">
             <AppHeader homeHref="https://mnmando.org"
               filter={eventFilter}
+              latestEventFirst={props.latestEventFirst}
               listAllEvents={props.listAllEvents}
               logoImageSrc="logo.png"
               logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
               signOut={signOut}
               userName={user?.attributes?.name || '???'} />
-            <EventContent eventCards={props.config.eventCards} filter={eventFilter} /> 
+            <EventContent
+              eventCards={props.config.eventCards}
+              filter={eventFilter}
+              latestEventFirst={props.latestEventFirst} /> 
           </Card>
         );
       }}
