@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, debounceTime } from 'rxjs';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
@@ -19,7 +19,9 @@ const latestEventFirst = new BehaviorSubject(
 const listAllEvents = new BehaviorSubject(
   localStorage['listAllEvents'] === 'true');
 const appProps = {
-  config: demoMode ? newDemoConfig() : newConfig({listAllEvents}),
+  config: demoMode ?
+    newDemoConfig() :
+    newConfig({ listAllEvents: listAllEvents.pipe(debounceTime(1000)) }),
   latestEventFirst: latestEventFirst,
   listAllEvents: listAllEvents,
 };
