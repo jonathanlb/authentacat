@@ -2,6 +2,9 @@ import { useState } from 'react';
 import Debug from 'debug';
 import { BehaviorSubject, Observer } from 'rxjs';
 
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
@@ -13,6 +16,7 @@ import Typography from '@mui/material/Typography';
 
 import Logout from '@mui/icons-material/Logout';
 import Search from '@mui/icons-material/Search';
+import Settings from '@mui/icons-material/Settings';
 
 import './AppHeader.css';
 
@@ -74,39 +78,51 @@ export function AppHeader(props: AppHeaderProps) {
           onChange={ e => props.filter.next(e.target.value) } />
       </Tooltip>
 
-      <Box sx={{ margin: '3%', padding: '1%', border: '1px solid grey', borderRadius: '5px', display: 'flex', flexDirection: 'column' }}>
-        <Tooltip title="Logout">
-          <Button className="AppHeaderButton" 
-            aria-label="logout button"
-            onClick={props.signOut}>
-            <Logout/>
-          </Button>
-        </Tooltip>
+      <Accordion 
+        disableGutters
+        elevation={0}
+        sx={{ '&:before': { display: 'none', }}}>
+        <AccordionSummary
+          expandIcon={<Tooltip title="Show/hide settings"><Settings /></Tooltip>}
+          >
+        </AccordionSummary> 
 
-        <FormControl>
-          <FormControlLabel
-            control={
-              <Switch checked={listAllEvents }
-                onChange={updateListAllEvents}
-                />
-            }
-            label={listAllEvents ? 'All events' : 'Active events' }
+        <AccordionDetails> 
+          <FormControl>
+            <FormControlLabel
+              control={
+                <Switch checked={listAllEvents }
+                  onChange={updateListAllEvents}
+                  />
+              }
+              label={listAllEvents ? 'All events' : 'Active only' }
+              />
+          </FormControl>
+
+          <FormControl>
+            <FormControlLabel
+              control={
+                <Switch checked={latestEventFirst}
+                  onChange={updateLatestEventFirst}
+                  />
+              }
+              label={latestEventFirst ? 'Latest first' : 'Oldest first' }
+              />
+          </FormControl>
+
+          <FormControl>
+            <FormControlLabel label="Logout"
+              control={
+                <Button className="AppHeaderButton" 
+                  aria-label="logout button"
+                  onClick={props.signOut}>
+                  <Logout/>
+                </Button>
+              }
             />
-        </FormControl>
-
-        <FormControl>
-          <FormControlLabel
-            control={
-              <Switch checked={latestEventFirst}
-                onChange={updateLatestEventFirst}
-                />
-            }
-            label={latestEventFirst ? 'Latest first' : 'Oldest first' }
-            />
-        </FormControl>
-
-      </Box>
-
+          </FormControl>
+        </AccordionDetails> 
+      </Accordion>
     </Box>
   );
 }
