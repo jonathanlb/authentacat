@@ -4,6 +4,7 @@ const debug = Debug('rsvp:model:aggregate');
 
 export type InterestResponse = {
   dt: number;
+  email: string;
   name: string;
   section: string;
   rsvp: number;

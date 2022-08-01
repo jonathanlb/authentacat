@@ -39,6 +39,7 @@ export class RsvpReportCollector extends RestClient {
               const userInfo = await this.userDirectory.getUserInfo(Number(uid));
               arr.push({
                 dt: dtId,
+                email: userInfo.email,
                 name: userInfo.name,
                 section: userInfo.section,
                 rsvp: Number(rsvp),
