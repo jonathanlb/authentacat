@@ -16,4 +16,4 @@ Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) i
 ## Demo Mode
 
 Whether you'd like to see what the front-end looks like for development or demonstration outside of the application data, Authentacat can be displayed by setting the `demoMode` variable in [`index.ts`](src/index.ts).
-Then run `npm run start` and point your browser to [https://localhost:3000](https://localhost:3000).
+Then run `npm run start` and point your browser to [http://localhost:3000](https://localhost:3000).
