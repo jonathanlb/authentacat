@@ -8,11 +8,7 @@
   justify-content: left;
   align-items: center;
   position: relative;
-}
-
-.AppHeader img {
-  height: 12em;
-  padding: 2%;
+  width: 100%;
 }
 
 .AppHeaderButton {
@@ -21,6 +17,25 @@
 
 .AppHeaderFilter {
   margin: 2%;
+  width: 50%;
+}
+
+.LogoImg {
+  height: auto;
+  width: 100%;
+}
+
+.LogoHref {
+  display: inline-block;
+  max-width: 35%;
+  padding: 2%;
+}
+
+.SettingsMenu {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding-left: 4%;
 }
 
 .UserNameNotice {

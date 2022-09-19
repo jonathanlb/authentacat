@@ -2,13 +2,11 @@ import { useState } from 'react';
 import Debug from 'debug';
 import { BehaviorSubject, Observer } from 'rxjs';
 
-import Accordion from '@mui/material/Accordion';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import AccordionSummary from '@mui/material/AccordionSummary';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import IconButton from '@mui/material/IconButton';
+import Popover from '@mui/material/Popover';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
@@ -33,12 +31,23 @@ export type AppHeaderProps = {
   userName: string;
 }
 
+const SETTINGS_POPOVER_ID = 'settings-popover';
+
 export function AppHeader(props: AppHeaderProps) {
-  const [latestEventFirst, setLatestEventFirst ] = useState(
+  const [settingsAnchor, setSettingsAnchor] = useState<HTMLButtonElement | null>(null);
+  const [latestEventFirst, setLatestEventFirst] = useState(
     props.latestEventFirst.getValue());
 
-  const [listAllEvents, setListAllEvents ] = useState(
+  const [listAllEvents, setListAllEvents] = useState(
     props.listAllEvents.getValue());
+
+  function handleSettingsClick(event: React.MouseEvent<HTMLButtonElement>) {
+    setSettingsAnchor(event.currentTarget);
+  };
+
+  function handleSettingsClose() {
+    setSettingsAnchor(null);
+  };
 
   function updateLatestEventFirst(e: any) {
     const newValue = e.target.checked;
@@ -60,14 +69,20 @@ export function AppHeader(props: AppHeaderProps) {
     }
   }
 
+  const isSettingsOpen = Boolean(settingsAnchor);
+  const settingsId = isSettingsOpen ? SETTINGS_POPOVER_ID : undefined;
+
   return (
     <Box className="AppHeader">
-      <a href={props.homeHref}>
-        <img src={props.logoImageSrc} alt={props.logoImageSrcAlt || "logo" } />
+      <a className="LogoHref"
+        href={props.homeHref}>
+        <img className="LogoImg"
+          src={props.logoImageSrc}
+          alt={props.logoImageSrcAlt || "logo"} />
       </a>
 
       <Typography className="UserNameNotice">
-        Welcome, { props.userName }
+        Welcome, {props.userName}
       </Typography>
 
       <Tooltip title="Filter events">
@@ -75,28 +90,37 @@ export function AppHeader(props: AppHeaderProps) {
           aria-label="filter events by name or venue"
           label={<Search />}
           id="eventFilterText"
-          onChange={ e => props.filter.next(e.target.value) } />
+          onChange={e => props.filter.next(e.target.value)} />
       </Tooltip>
 
-      <Accordion 
-        disableGutters
-        elevation={0}
-        sx={{ '&:before': { display: 'none', }}}>
-        <AccordionSummary
-          expandIcon={<Tooltip title="Show/hide settings"><Settings /></Tooltip>}
-          >
-        </AccordionSummary> 
+      <Tooltip title="Settings">
+        <IconButton
+          aria-describedby={settingsId}
+          onClick={handleSettingsClick}
+        >
+          <Settings />
+        </IconButton>
+      </Tooltip>
 
-        <AccordionDetails> 
+      <Popover
+        aria-label="edit settings"
+        id={settingsId}
+        open={isSettingsOpen}
+        anchorEl={settingsAnchor}
+        onClose={handleSettingsClose}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+        transformOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Box className="SettingsMenu">
           <FormControl>
             <FormControlLabel
               control={
-                <Switch checked={listAllEvents }
+                <Switch checked={listAllEvents}
                   onChange={updateListAllEvents}
-                  />
+                />
               }
-              label={listAllEvents ? 'All events' : 'Active only' }
-              />
+              label={listAllEvents ? 'All events' : 'Active only'}
+            />
           </FormControl>
 
           <FormControl>
@@ -104,25 +128,26 @@ export function AppHeader(props: AppHeaderProps) {
               control={
                 <Switch checked={latestEventFirst}
                   onChange={updateLatestEventFirst}
-                  />
+                />
               }
-              label={latestEventFirst ? 'Latest first' : 'Oldest first' }
-              />
+              label={latestEventFirst ? 'Latest first' : 'Oldest first'}
+            />
           </FormControl>
 
           <FormControl>
             <FormControlLabel label="Logout"
               control={
-                <Button className="AppHeaderButton" 
+                <IconButton className="AppHeaderButton"
                   aria-label="logout button"
                   onClick={props.signOut}>
-                  <Logout/>
-                </Button>
+                  <Logout />
+                </IconButton>
               }
             />
           </FormControl>
-        </AccordionDetails> 
-      </Accordion>
+        </Box>
+      </Popover>
+
     </Box>
   );
 }
