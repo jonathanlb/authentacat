@@ -210,6 +210,27 @@ const interestResponses = [
   ],
 ];
 
+const rideShares = [
+  [
+    {
+      name: 'Alvin',
+      neighborhood: 'Uptown',
+      provideRide: false,
+    },
+    {
+      name: 'Susan',
+      neighborhood: 'Uptown',
+      provideRide: true,
+    },
+    {
+      name: 'Ted',
+      neighborhood: 'The Other Side of the Tracks',
+      provideRide: false,
+    },
+  ],
+  [],
+];
+
 /** Return all the responses, the event cards will partitition them by dtId. */
 function getInterestResponse(): Observable<Array<InterestResponse>> {
   const res = new BehaviorSubject([] as Array<InterestResponse>);
@@ -241,6 +262,7 @@ const events: Array<EventCardProps> = [
       },
     ],
     interestResponse: getInterestResponse(),
+    rideShares: new BehaviorSubject(rideShares[0]),
   },
   {
     descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
@@ -263,6 +285,7 @@ const events: Array<EventCardProps> = [
       },
     ],
     interestResponse: getInterestResponse(),
+    rideShares: new BehaviorSubject(rideShares[1]),
   }
 ];
 

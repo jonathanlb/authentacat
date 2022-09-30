@@ -13,6 +13,11 @@ Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) i
 - Update/add the `homepage` field in [package.json](package.json) if the endpoint is not at the top-level.
 - Run `npm run build` and copy or link the the contents of `build/` to your webserver.
 
+### Ridesharing coordination
+There is an optional feature to display participants who wish to carpool to events.
+Enable the feature on the front end by setting `showRideShare` to `true` in
+[src/index.tsx](src/index.tsx).
+
 ## Demo Mode
 
 Whether you'd like to see what the front-end looks like for development or demonstration outside of the application data, Authentacat can be displayed by setting the `demoMode` variable in [`index.ts`](src/index.ts).

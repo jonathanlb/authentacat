@@ -4,6 +4,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 
 import { InterestResponse } from '../../aggregate';
 import { EventCard, mapDateTimesToResponses } from '../EventCard';
+import { RideShare } from '../../rideShare';
 
 const venue = {
   name: 'Birdland',
@@ -26,6 +27,7 @@ test('event card renders', () => {
     venue: venue,
     dateTimes: dateTimes,
     interestResponse: new Subject<Array<InterestResponse>>(),
+    rideShares: new Subject<Array<RideShare>>(),
   };
 
   render(<EventCard {...props}/>);
@@ -48,6 +50,7 @@ test('event card shows interest report', async () => {
     dateTimes: dateTimes,
     interestResponse: new Subject<Array<InterestResponse>>(),
     showAdmin: true,
+    rideShares: new Subject<Array<RideShare>>(),
   };
 
   render(<EventCard {...props}/>);
@@ -74,6 +77,7 @@ test('event card hides interest report', async () => {
     dateTimes: dateTimes,
     interestResponse: new Subject<Array<InterestResponse>>(),
     showAdmin: true,
+    rideShares: new Subject<Array<RideShare>>(),
   };
 
   render(<EventCard {...props}/>);

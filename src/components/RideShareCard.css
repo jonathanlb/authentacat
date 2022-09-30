@@ -1,0 +1,14 @@
+.RideShareCard {
+    border-color: grey;
+    border-style: solid;
+    border-width: 0.5px;
+    margin: 3%;
+    padding: 2%;
+    text-align: left;
+}
+
+.RideShareHeader {
+    align-items: center;
+    display: flex;
+    gap: 5%;
+}

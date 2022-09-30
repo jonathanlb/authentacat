@@ -14,6 +14,8 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = false;
+const showRideShare = false;
+
 const latestEventFirst = new BehaviorSubject(
   localStorage['latestEventFirst'] === 'true');
 const listAllEvents = new BehaviorSubject(
@@ -24,6 +26,7 @@ const appProps = {
     newConfig({ listAllEvents: listAllEvents.pipe(debounceTime(1000)) }),
   latestEventFirst: latestEventFirst,
   listAllEvents: listAllEvents,
+  showRideShare: showRideShare,
 };
 
 const root = ReactDOM.createRoot(

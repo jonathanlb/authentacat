@@ -12,6 +12,8 @@ export type EventContentProps = {
   eventCards: Observable<Array<EventCardProps>>;
   filter: Observable<string>;
   latestEventFirst: BehaviorSubject<boolean>; // getValue only here
+  showRideShare?: boolean;
+  userName?: string;
 };
 
 // const debug = Debug('rsvp:component:eventContent');
@@ -90,6 +92,8 @@ export function EventContent(props: EventContentProps) {
               <EventCard
                 key={eventConfig.name}
                 showAdmin={showRsvpDetails}
+                showRideShare={props.showRideShare}
+                userName={props.userName}
                 {...eventConfig} />
             </Box>
           )

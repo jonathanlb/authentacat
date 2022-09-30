@@ -12,3 +12,21 @@
   padding-top: 0%;
   text-align: left;
 }
+
+.EventDetails {
+  align-items: center;
+  display: flex;
+  flex-direction: column;;
+  justify-content: center;
+  width: 100%;
+}
+
+.VenueOptionsLayout {
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+  flex-shrink: 1;
+  justify-content: center;
+  width: 100%;
+}

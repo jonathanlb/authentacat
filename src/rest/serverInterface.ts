@@ -8,6 +8,7 @@ import { EventCardProps } from '../components/EventCard';
 import { lastYear, today } from '../dateTime';
 import { InterestReporter } from './interestReporter';
 import { RestClient } from './restClient';
+import { RideShare } from '../rideShare';
 import { RsvpReportCollector } from './rsvpReportCollector';
 import { RsvpReporter } from './rsvpReporter';
 import { VenueCardProps } from '../components/VenueCard';
@@ -74,6 +75,7 @@ export class ServerImpl extends RestClient {
       venue: await this.getVenue(eventDesc.venue),
       dateTimes: dts,
       interestResponse: this.rsvpCollector.getRsvps(eventId),
+      rideShares: new BehaviorSubject<Array<RideShare>>([]), // XXX TODO
     };
     debug('completed event card', eventDesc.id);
     return Promise.resolve(eventCard);

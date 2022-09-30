@@ -19,6 +19,7 @@ export type AppProps = {
   config: ServerInterface;
   latestEventFirst: BehaviorSubject<boolean>;
   listAllEvents: BehaviorSubject<boolean>;
+  showRideShare?: boolean;
 }
 
 const errors = Debug('rsvp:App:errors');
@@ -38,6 +39,8 @@ function App(props: AppProps) {
       {({ signOut, user }) => { 
         unsub = handleErrorSignOut(props.config, signOut as () => void); 
 
+        const userName = user?.attributes?.name || '???';
+
         return ( 
           <Card className="App">
             <AppHeader homeHref="https://mnmando.org"
@@ -47,11 +50,13 @@ function App(props: AppProps) {
               logoImageSrc="logo.png"
               logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
               signOut={signOut}
-              userName={user?.attributes?.name || '???'} />
+              userName={userName} />
             <EventContent
               eventCards={props.config.eventCards}
               filter={eventFilter}
-              latestEventFirst={props.latestEventFirst} /> 
+              latestEventFirst={props.latestEventFirst}
+              showRideShare={props.showRideShare}
+              userName={userName} /> 
           </Card>
         );
       }}

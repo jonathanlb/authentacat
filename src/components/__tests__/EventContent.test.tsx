@@ -6,6 +6,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import { InterestResponse } from '../../aggregate';
 import { EventCardProps } from '../EventCard';
 import { EventContent } from '../EventContent';
+import { RideShare } from '../../rideShare';
 
 const venue = {
   name: 'The break room',
@@ -30,6 +31,7 @@ test('event content renders', () => {
       venue: venue,
       dateTimes: [],
       interestResponse: new Subject<Array<InterestResponse>>(),
+      rideShares: new Subject<Array<RideShare>>(),
     }]);
   });
   const elt = screen.getByText(/Unit Testing Bachinalia/);
@@ -55,6 +57,7 @@ test('event content filters', () => {
       venue: venue,
       dateTimes: [],
       interestResponse: new Subject<Array<InterestResponse>>(),
+      rideShares: new Subject<Array<RideShare>>(),
     }]);
   });
   let elt = screen.getByText(/Unit Testing Bachinalia/);
