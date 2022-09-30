@@ -1,6 +1,21 @@
 # Authentacat Front End for Cat Wrangler
 
 This project provides a web user interface for [CatWrangler (V2)](https://github.com/jonathanlb/cat-wrangler-v2).
+Users can browse and RSVP for events, for example:
+
+![Sample event description](docs/event-summary.png)
+
+Users can see a [Markdown](https://www.markdownguide.org/basic-syntax/)
+description of the event,
+and RSVP for date-time alternatives.
+Each date-time possibility displays a general-interest
+(Italian flag) indicator showing the number of positive,
+negative, and neutral responses.
+Administrators can expand the interest indicator to get
+reports on which users plan to attend or not, as well as sectional interest.
+
+![Sample attendance report](docs/attendance-summary.png)
+
 Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) include
 
 - Using [MUI Core web components](https://mui.com/), instead of home-rolled ones built on [yo-yo](https://github.com/maxogden/yo-yo).  The resulting product renders more consistently on smaller screens and conforms to wider usability and accessibility standards.
