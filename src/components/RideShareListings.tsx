@@ -1,7 +1,3 @@
-import { useState, useEffect } from 'react';
-
-import { Observable } from 'rxjs';
-
 import Box from '@mui/material/Box';
 
 import './RideShareListings.css';
@@ -9,16 +5,10 @@ import { RideShare } from '../rideShare';
 import { Typography } from '@mui/material';
 
 export type RideShareListingsProps = {
-  rideShares: Observable<Array<RideShare>>;
+  rideShares: Array<RideShare>;
 }
 
 export function RideShareListings(props: RideShareListingsProps) {
-  const [ rideShares, setRideShares ] = useState([] as Array<RideShare>);
-
-  useEffect(() => {
-    const sub = props.rideShares.subscribe(setRideShares);
-    return () => sub.unsubscribe();
-  }, [ props.rideShares ]);
 
   const renderRideShares = (rideShares: Array<RideShare>) => {
     return rideShares.map((rs, i) =>
@@ -29,7 +19,7 @@ export function RideShareListings(props: RideShareListingsProps) {
     );
   };
 
-  if (rideShares.length === 0) {
+  if (props.rideShares.length === 0) {
     return(
       <Box/>
     );
@@ -41,13 +31,13 @@ export function RideShareListings(props: RideShareListingsProps) {
         <Typography variant='h6'>
           Riders
         </Typography>
-        { renderRideShares(rideShares.filter(x => !x.provideRide)) }
+        { renderRideShares(props.rideShares.filter(x => !x.provideRide)) }
       </Box>
       <Box className='rideShareSide'>
         <Typography variant='h6'>
           Drivers 
         </Typography>
-        { renderRideShares(rideShares.filter(x => x.provideRide)) }
+        { renderRideShares(props.rideShares.filter(x => x.provideRide)) }
       </Box>
     </Box>
   )

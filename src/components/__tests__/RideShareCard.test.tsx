@@ -7,7 +7,7 @@ import { BehaviorSubject, Subject } from 'rxjs';
 test('empty ride share card renders without driver list', () => {
   const rideShares = new BehaviorSubject<Array<RideShare>>([]);
   const props = {
-    name: 'Bobo the Clown',
+    expressRideShare: new Subject<RideShare>(),
     neighborhood: 'The Big Tent',
     provideRide: false,
     rideShares: rideShares,
@@ -27,10 +27,16 @@ test('empty ride share card renders without driver list', () => {
 });
 
 test('ride share card updates', () => {
+  const expressRideShare = new Subject<RideShare>();
   const rideShares = new BehaviorSubject<Array<RideShare>>([]);
+
+  const sub = expressRideShare.subscribe(rs => {
+    rs.name = 'Bobo the Clown';
+    rideShares.next([rs]);
+  });
+
   const props = {
-    name: 'Bobo the Clown',
-    provideRide: false,
+    expressRideShare: expressRideShare,
     rideShares: rideShares,
   };
   const neighborhood = 'The Big Tent';
@@ -42,7 +48,7 @@ test('ride share card updates', () => {
   fireEvent.click(button);
   const textBox = screen.getByText(new RegExp(`.*${neighborhood}.*`));
   expect(textBox).toBeInTheDocument();
-  // TODO make sure rideShares has been published and child listing rendered....
-  // not trivial?
+  
+  sub.unsubscribe();
 });
 

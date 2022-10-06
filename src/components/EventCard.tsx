@@ -33,12 +33,13 @@ const debug = Debug('rsvp:component:eventCard');
 const RIDESHARE_POPOVER_ID  = 'rideshare-popover';
 
 export type EventCardProps = {
+  expressRideShare: Subject<RideShare>,
   descriptionMd: string,
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
   interestResponse: Observable<Array<InterestResponse>>,
-  rideShares: BehaviorSubject<Array<RideShare>>,
+  rideShares: Observable<Array<RideShare>>,
   showAdmin?: boolean,
   showRideShare?: boolean,
   userName?: string,
@@ -147,7 +148,9 @@ export function EventCard(props: EventCardProps) {
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <RideShareCard name={props.userName || '???'} rideShares={props.rideShares} />
+              <RideShareCard 
+                expressRideShare={props.expressRideShare}
+                rideShares={props.rideShares} />
             </Popover>
           </Box>
 

@@ -8,11 +8,11 @@ import { EventCardProps } from '../components/EventCard';
 import { lastYear, today } from '../dateTime';
 import { InterestReporter } from './interestReporter';
 import { RestClient } from './restClient';
-import { RideShare } from '../rideShare';
 import { RsvpReportCollector } from './rsvpReportCollector';
 import { RsvpReporter } from './rsvpReporter';
 import { VenueCardProps } from '../components/VenueCard';
 import { UserDirectory } from './userDirectory';
+import { RideShareReporter } from './ridesShareReporter';
 
 const debug = Debug('rsvp:control');
 const errors = Debug('rsvp:control:error');
@@ -37,6 +37,7 @@ export class ServerImpl extends RestClient {
   eventCards: BehaviorSubject<Array<EventCardProps>>;
   interestReporter: InterestReporter;
   listAllEvents: Observable<boolean>;
+  rideShareReporter: RideShareReporter;
   rsvpCollector: RsvpReportCollector;
   rsvpReporter: RsvpReporter;
   stopped: boolean;
@@ -49,6 +50,9 @@ export class ServerImpl extends RestClient {
     this.userDirectory = new UserDirectory(config);
     this.interestReporter = new InterestReporter(config);
     this.listAllEvents = config.listAllEvents;
+    this.rideShareReporter = new RideShareReporter({
+      serverName: this.serverName,
+    });
     this.rsvpCollector = new RsvpReportCollector({
       serverName: this.serverName,
       userDirectory: this.userDirectory,
@@ -70,12 +74,13 @@ export class ServerImpl extends RestClient {
     const dts = this.getEventTally(
       eventDesc.dateTime ? [ eventDesc.dateTime ] : eventDesc.dateTimes);
     const eventCard = {
+      expressRideShare: this.rideShareReporter.setRideShares(eventId),
       descriptionMd: eventDesc.description,
       name: eventDesc.name,
       venue: await this.getVenue(eventDesc.venue),
       dateTimes: dts,
       interestResponse: this.rsvpCollector.getRsvps(eventId),
-      rideShares: new BehaviorSubject<Array<RideShare>>([]), // XXX TODO
+      rideShares: this.rideShareReporter.getRideShares(eventId),
     };
     debug('completed event card', eventDesc.id);
     return Promise.resolve(eventCard);
@@ -128,6 +133,7 @@ export class ServerImpl extends RestClient {
     const session = await Auth.currentSession();
     this.accessToken = session.getIdToken().getJwtToken();
     this.interestReporter.accessToken = this.accessToken;
+    this.rideShareReporter.accessToken = this.accessToken;
     this.rsvpCollector.accessToken = this.accessToken;
     this.rsvpReporter.accessToken = this.accessToken;
     this.userDirectory.accessToken = this.accessToken;

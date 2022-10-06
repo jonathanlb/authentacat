@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 
 import Box from '@mui/material/Box';
 
-import Debug from 'debug';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { take } from 'rxjs/operators';
 
@@ -15,8 +14,6 @@ export type EventContentProps = {
   showRideShare?: boolean;
   userName?: string;
 };
-
-// const debug = Debug('rsvp:component:eventContent');
 
 // fade transition only applies to filtered event cards, not reordered or just loaded
 const CARD_TRANSITION = 'visibility 0.3s linear,opacity 0.3s linear';

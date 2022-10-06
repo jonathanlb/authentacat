@@ -1,31 +1,40 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { BehaviorSubject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
+
+import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
+import Collapse from '@mui/material/Collapse';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Button from '@mui/material/Button';
+import IconButton from '@mui/material/IconButton';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import AirlineSeatReclineExtraIcon from '@mui/icons-material/AirlineSeatReclineExtra';
-import Clear from '@mui/icons-material/Clear';
+import CloseIcon from '@mui/icons-material/Close';
 import ElectricCar from '@mui/icons-material/ElectricCar';
 import LocationCity from '@mui/icons-material/LocationCity';
+import NoTransfer from '@mui/icons-material/NoTransfer';
 
 import './RideShareCard.css';
 import { RideShare } from '../rideShare';
 import { RideShareListings } from './RideShareListings';
 
+import Debug from 'debug';
+
+const debug = Debug('rsvp:component:rideShareCard');
+
 export type RideShareCardProps = {
-    name: string;
+    expressRideShare: Subject<RideShare>;
     neighborhood?: string;
     provideRide?: boolean;
-    rideShares: BehaviorSubject<Array<RideShare>>;
+    rideShares: Observable<Array<RideShare>>;
 }
 
 const RIDE_SHARE_INSTRUCTIONS = 
@@ -40,29 +49,43 @@ export function RideShareCard(props: RideShareCardProps) {
     const [provideRide, setProvideRide] = useState(props.provideRide || false);
     const [neighborhood, setNeighborhood] = useState(
         props.neighborhood || localStorage['rideshare-neighborhood'] || '');
+    const [neighborhoodError, setNeighborhoodError] = useState('');
+    const [rideShares, setRideShares] = useState([] as Array<RideShare>);
 
     function clearRideShare() {
-        props.rideShares.next(
-            props.rideShares.getValue()
-                .filter(x => x.name !== props.name));
+        debug('clear rideshare');
+        props.expressRideShare.next({
+            name: '',
+            neighborhood: '',
+            provideRide: false,
+        });
     }
 
     function submitRideShare() {
-        const newRideShare = props.rideShares.getValue()
-            .filter(x => x.name !== props.name);
-        newRideShare.push({
-            name: props.name,
-            neighborhood: neighborhood,
-            provideRide: provideRide,
-        });
-        props.rideShares.next(newRideShare);
+        const trimmedNeighborhood = neighborhood.trim();
+        if (trimmedNeighborhood) {
+            debug('submit rideshare', trimmedNeighborhood, provideRide);
+            props.expressRideShare.next({
+                name: '',
+                neighborhood: trimmedNeighborhood,
+                provideRide: provideRide,
+            });
+        } else {
+            setNeighborhoodError(
+                'You must provide a neighborhood name.  Use the clear-ride button to remove your listing.');
+        }
     }
 
     function updateNeighborhood(e: React.ChangeEvent<HTMLInputElement>) {
-        const n = e.target?.value?.trim() || '';
-        localStorage['rideshare-neighborhood'] = n;
+        const n = e.target?.value;
+        localStorage['rideshare-neighborhood'] = n?.trim();
         setNeighborhood(n);
     }
+
+    useEffect(() => {
+        const sub = props.rideShares.subscribe(setRideShares);
+        return () => sub.unsubscribe();
+    }, [ props.rideShares ]);
 
     return (
         <Card className='RideShareCard'>
@@ -75,13 +98,35 @@ export function RideShareCard(props: RideShareCardProps) {
                 </Tooltip>
 
                 <Tooltip title='Your neighborhood'>
-                    <TextField
-                        aria-label='what neighborhood do you ride from'
-                        label={<LocationCity />}
-                        value={neighborhood}
-                        id={NEIGHBORHOOD_TEXT_ID}
-                        onChange={updateNeighborhood}
-                    />
+                    <Box>
+                        <Box sx={{ width: '100%' }}>
+                            <Collapse in={'' !== neighborhoodError}>
+                                <Alert
+                                    severity='warning'
+                                    action={
+                                        <IconButton
+                                            aria-label="close neighborhood error alert"
+                                            color="inherit"
+                                            size="small"
+                                            onClick={() => setNeighborhoodError('') }
+                                        >
+                                            <CloseIcon fontSize="inherit" />
+                                        </IconButton>
+                                    }
+                                    sx={{ mb: 2 }}
+                                >
+                                    {neighborhoodError}
+                                </Alert>
+                            </Collapse>
+                        </Box>
+                        <TextField
+                            aria-label='what neighborhood do you ride from'
+                            label={<LocationCity />}
+                            value={neighborhood}
+                            id={NEIGHBORHOOD_TEXT_ID}
+                            onChange={updateNeighborhood}
+                        />
+                    </Box>
                 </Tooltip>
 
                 <Tooltip title='Will you drive or ride?'>
@@ -107,14 +152,14 @@ export function RideShareCard(props: RideShareCardProps) {
                 <Tooltip title='Reset my rideshare info'>
                     <Button variant='outlined'
                         onClick={clearRideShare}>
-                        <Clear/>
+                        <NoTransfer/>
                     </Button>
                 </Tooltip>
 
             </Box>
 
             <RideShareListings
-                rideShares={props.rideShares} />
+                rideShares={rideShares} />
 
         </Card>
     );

@@ -14,7 +14,7 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = false;
-const showRideShare = false;
+const showRideShare = true;
 
 const latestEventFirst = new BehaviorSubject(
   localStorage['latestEventFirst'] === 'true');

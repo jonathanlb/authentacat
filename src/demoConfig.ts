@@ -1,7 +1,8 @@
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { InterestResponse, summarizeResponses } from './aggregate';
 import { EventCardProps } from './components/EventCard';
+import { RideShare } from './rideShare';
 import { ServerInterface } from './rest/serverInterface';
 
 import Debug from 'debug';
@@ -242,6 +243,7 @@ function getInterestResponse(): Observable<Array<InterestResponse>> {
 
 const events: Array<EventCardProps> = [
   {
+    expressRideShare: new Subject(),
     descriptionMd: 'We\'ll perform all the **greatest** hits and misses of the Orangatan Oboe Orchestra.\n\nBring your own snacks.',
     name: 'The Festivalissimo!',
     venue: venues[0],
@@ -265,6 +267,7 @@ const events: Array<EventCardProps> = [
     rideShares: new BehaviorSubject(rideShares[0]),
   },
   {
+    expressRideShare: new Subject(),
     descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
     name: 'A Rerun',
     venue: venues[1],
@@ -288,6 +291,18 @@ const events: Array<EventCardProps> = [
     rideShares: new BehaviorSubject(rideShares[1]),
   }
 ];
+
+events.forEach(e => {
+  e.expressRideShare.subscribe(rs => {
+    const name = 'You';
+    rs.name = name;
+    const rss = (e.rideShares as BehaviorSubject<Array<RideShare>>).getValue().filter(r => r.name !== name);
+    if (rs.neighborhood) {
+      rss.push(rs);
+    }
+    (e.rideShares as BehaviorSubject<Array<RideShare>>).next(rss);
+  })
+})
 
 export function newDemoConfig(): ServerInterface {
   const eventCards = new BehaviorSubject([] as Array<EventCardProps>);
