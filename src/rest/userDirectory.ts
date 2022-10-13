@@ -9,8 +9,10 @@ export type UserDirectoryConfig = {
 }
 
 export type UserInfo = {
+  editor?: number,
   email: string,
   name: string,
+  organizer?: number,
   section: string,
 };
 
@@ -28,7 +30,7 @@ export class UserDirectory extends RestClient {
       const url = `${this.serverName}/user/get/${id}`;
       const j = await this.fetchJson(url);
       debug('fetched', id, j);
-      u = { email: j.email, name: j.name, section: j.section };
+      u = { editor: j.editor, email: j.email, name: j.name, organizer: j.organizer, section: j.section };
       this.userInfo.set(id, u);
     }
     return Promise.resolve(u);

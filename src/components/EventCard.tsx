@@ -9,13 +9,16 @@ import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Popover from '@mui/material/Popover';
 import ReactMarkdown from 'react-markdown';
+import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AirportShuttle from '@mui/icons-material/AirportShuttle';
+import Edit from '@mui/icons-material/Edit';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Save from '@mui/icons-material/Save';
 
-import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Observer, Subject, Subscription } from 'rxjs';
 
 import './EventCard.css';
 import { InterestResponse } from '../aggregate';
@@ -33,7 +36,9 @@ const debug = Debug('rsvp:component:eventCard');
 const RIDESHARE_POPOVER_ID  = 'rideshare-popover';
 
 export type EventCardProps = {
+  editable: boolean,
   expressRideShare: Subject<RideShare>,
+  descriptionEdits: Observer<string>,
   descriptionMd: string,
   name: string,
   venue: VenueCardProps,
@@ -78,9 +83,11 @@ export function mapDateTimesToResponses(
 
 export function EventCard(props: EventCardProps) {
   debug('render');
-  const [ showInterestReportId, setShowInterestReportId ] = useState(0);
   const [ dateTimeInterest, setDateTimeInterest ] = useState('');
+  const [ descriptionMd, setDescriptionMd ] = useState(props.descriptionMd);
+  const [ editing, setEditing ] = useState(false);
   const [ rideshareAnchor, setRideshareAnchor] = useState<HTMLButtonElement | null>(null);
+  const [ showInterestReportId, setShowInterestReportId ] = useState(0);
 
   const [responses, irSub ] = mapDateTimesToResponses(
     props.dateTimes, props.interestResponse);
@@ -93,9 +100,8 @@ export function EventCard(props: EventCardProps) {
     }
   });
 
-  function handleShowInterestReport(dt: DateTimeInterestProps) {
-    setShowInterestReportId(dt.id);
-    setDateTimeInterest(`${formatDate(dt.yyyymmdd)} ${formatTime(dt.hhmm)} (${dt.duration})`);
+  function handleEditClick() {
+    setEditing(true);
   }
 
   function handleHideInterestReport() {
@@ -110,22 +116,59 @@ export function EventCard(props: EventCardProps) {
     setRideshareAnchor(null);
   };
 
+  function handleSaveClick() {
+    const content = (document.getElementById('eventEditor') as HTMLInputElement)?.value?.trim();
+    props.descriptionEdits.next(content);
+    setDescriptionMd(content);
+    setEditing(false);
+  }
+
+  function handleShowInterestReport(dt: DateTimeInterestProps) {
+    setShowInterestReportId(dt.id);
+    setDateTimeInterest(`${formatDate(dt.yyyymmdd)} ${formatTime(dt.hhmm)} (${dt.duration})`);
+  }
+
   const isRideshareOpen = Boolean(rideshareAnchor);
   const rideshareId = isRideshareOpen ? RIDESHARE_POPOVER_ID : undefined;
 
   return(
     <Card className="EventCard" raised={true}>
       <Accordion>
-        <AccordionSummary expandIcon={<Tooltip title="Show/hide event details"><ExpandMoreIcon /></Tooltip>}>
+        <AccordionSummary expandIcon={<Tooltip title="Show/hide event details"><ExpandMore /></Tooltip>}>
           <Typography variant="h3" color="text.primary">
             { props.name }
           </Typography>
         </AccordionSummary>
 
         <AccordionDetails className='EventDetails'>
-          <ReactMarkdown className="EventDescriptionDiv">
-            { props.descriptionMd }
-          </ReactMarkdown>
+          { editing ?
+            null :
+            <Tooltip title='Edit markdown event description'>
+              <IconButton sx={{ position: 'absolute' }}
+                className='EditEventButton'
+                onClick={handleEditClick}
+              >
+                <Edit />
+              </IconButton>
+            </Tooltip>
+          }
+
+          { editing ?
+            <Box sx={{width: '100%' }}>
+              <TextField id='eventEditor' multiline={ true } defaultValue={ descriptionMd } sx={{width: '80%' }}/>
+              <Tooltip title='Save markdown event description'>
+                <IconButton 
+                  className='EditEventButton'
+                  onClick={handleSaveClick}
+                >
+                  <Save />
+                </IconButton>
+              </Tooltip>
+            </Box> :
+            <ReactMarkdown className='EventDescriptionDiv'>
+              { descriptionMd }
+            </ReactMarkdown>
+          }
 
           <Box className='VenueOptionsLayout'>
             <VenueCard name={props.venue.name} address={props.venue.address} />
@@ -181,7 +224,7 @@ export function EventCard(props: EventCardProps) {
                         aria-label="show rsvp details"
                         sx={{ width: '10%' }}
                         onClick={e => handleShowInterestReport(dt)}>
-                        <ExpandMoreIcon />
+                        <ExpandMore />
                       </Button>
                     </Tooltip>
                    : null

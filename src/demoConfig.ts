@@ -243,7 +243,9 @@ function getInterestResponse(): Observable<Array<InterestResponse>> {
 
 const events: Array<EventCardProps> = [
   {
+    editable: true,
     expressRideShare: new Subject(),
+    descriptionEdits: new Subject(),
     descriptionMd: 'We\'ll perform all the **greatest** hits and misses of the Orangatan Oboe Orchestra.\n\nBring your own snacks.',
     name: 'The Festivalissimo!',
     venue: venues[0],
@@ -267,7 +269,9 @@ const events: Array<EventCardProps> = [
     rideShares: new BehaviorSubject(rideShares[0]),
   },
   {
+    editable: true,
     expressRideShare: new Subject(),
+    descriptionEdits: new Subject(), // just a stub, component keeps local edits
     descriptionMd: 'More **greatest** hits and misses?\n\nBring snacks for the audience.',
     name: 'A Rerun',
     venue: venues[1],

@@ -1,10 +1,11 @@
 import { Auth } from '@aws-amplify/auth';
 
 import Debug from 'debug';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 
 import { DateTimeInterestProps } from '../components/DateTimeInterest';
 import { EventCardProps } from '../components/EventCard';
+import { EventEditor } from './eventEditor';
 import { lastYear, today } from '../dateTime';
 import { InterestReporter } from './interestReporter';
 import { RestClient } from './restClient';
@@ -35,6 +36,7 @@ export type ServerInterface = {
  */
 export class ServerImpl extends RestClient {
   eventCards: BehaviorSubject<Array<EventCardProps>>;
+  eventEditor: EventEditor;
   interestReporter: InterestReporter;
   listAllEvents: Observable<boolean>;
   rideShareReporter: RideShareReporter;
@@ -47,6 +49,7 @@ export class ServerImpl extends RestClient {
   constructor(config: ServerImplOpts) {
     super(config);
     this.eventCards = new BehaviorSubject([] as Array<EventCardProps>);
+    this.eventEditor = new EventEditor(config);
     this.userDirectory = new UserDirectory(config);
     this.interestReporter = new InterestReporter(config);
     this.listAllEvents = config.listAllEvents;
@@ -73,8 +76,11 @@ export class ServerImpl extends RestClient {
     debug('event description', eventDesc);
     const dts = this.getEventTally(
       eventDesc.dateTime ? [ eventDesc.dateTime ] : eventDesc.dateTimes);
+    const editable = eventDesc.editable;
     const eventCard = {
+      editable: editable,
       expressRideShare: this.rideShareReporter.setRideShares(eventId),
+      descriptionEdits: editable ? this.eventEditor.getEventEditor(eventId) : new Subject<string>(),
       descriptionMd: eventDesc.description,
       name: eventDesc.name,
       venue: await this.getVenue(eventDesc.venue),
@@ -132,6 +138,7 @@ export class ServerImpl extends RestClient {
     this.stopped = false;
     const session = await Auth.currentSession();
     this.accessToken = session.getIdToken().getJwtToken();
+    this.eventEditor.accessToken = this.accessToken;
     this.interestReporter.accessToken = this.accessToken;
     this.rideShareReporter.accessToken = this.accessToken;
     this.rsvpCollector.accessToken = this.accessToken;

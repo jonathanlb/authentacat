@@ -1,3 +1,10 @@
+.EditEventButton {
+  float: right;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+}
+
 .EventCard {
   border-color: grey;
   border-style: solid;

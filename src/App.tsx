@@ -5,8 +5,7 @@ import './App.css';
 import { Authenticator } from '@aws-amplify/ui-react';
 import '@aws-amplify/ui-react/styles.css';
 
-import Debug from 'debug';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 import Card from '@mui/material/Card';
 
@@ -22,7 +21,6 @@ export type AppProps = {
   showRideShare?: boolean;
 }
 
-const errors = Debug('rsvp:App:errors');
 const eventFilter = new BehaviorSubject<string>('');
 
 function App(props: AppProps) {

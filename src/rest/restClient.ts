@@ -42,4 +42,18 @@ export class RestClient {
       },
     };
   }
+
+  async post(url: string, body: any): Promise<string> {
+    const opts = this.fetchOpts();
+    opts.method = 'POST';
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = JSON.stringify(body);
+    return fetch(url, opts)
+      .then(resp => {
+        if (resp.status !== 200) {
+          throw new Error(`Cannot post ${url}: ${resp.status} "${resp.statusText}"`);
+        }
+        return resp.text()
+      });
+  }
 }

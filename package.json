@@ -1,9 +1,9 @@
 {
   "name": "authentacat-react",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "private": true,
   "dependencies": {
-    "@aws-amplify/ui-react": "^2.17.1",
+    "@aws-amplify/ui-react": "^3.5.7",
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@fontsource/roboto": "^4.5.7",
