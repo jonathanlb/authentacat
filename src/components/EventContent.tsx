@@ -8,7 +8,7 @@ import { take } from 'rxjs/operators';
 import { EventCard, EventCardProps } from './EventCard';
 
 export type EventContentProps = {
-  eventCards: Observable<Array<EventCardProps>>;
+  eventCards: Observable<Array<EventCardProps>>; // getValue only here
   filter: Observable<string>;
   latestEventFirst: BehaviorSubject<boolean>; // getValue only here
   showRideShare?: boolean;

@@ -14,6 +14,7 @@ import awsExports from './aws-exports';
 Amplify.configure(awsExports);
 
 const demoMode = false;
+const passwordless = false;
 const showRideShare = true;
 
 const latestEventFirst = new BehaviorSubject(
@@ -22,7 +23,7 @@ const listAllEvents = new BehaviorSubject(
   localStorage['listAllEvents'] === 'true');
 const appProps = {
   config: demoMode ?
-    newDemoConfig() :
+    newDemoConfig({ passwordless }) :
     newConfig({ listAllEvents: listAllEvents.pipe(debounceTime(1000)) }),
   latestEventFirst: latestEventFirst,
   listAllEvents: listAllEvents,

@@ -9,6 +9,10 @@ import Debug from 'debug';
 
 const debug = Debug('rsvp:control:demo');
 
+export type DemoConfig = {
+  passwordless?: boolean;
+};
+
 const venues = [
   {
     name: 'Bob\'s Big Tent',
@@ -308,13 +312,14 @@ events.forEach(e => {
   })
 })
 
-export function newDemoConfig(): ServerInterface {
+export function newDemoConfig(config: DemoConfig): ServerInterface {
   const eventCards = new BehaviorSubject([] as Array<EventCardProps>);
   const listAllEvents = new BehaviorSubject(false);
 
   return {
     eventCards,
     listAllEvents,
+    passwordless: config.passwordless,
     start: (stopOnError: (err: any) => void) => {
       try {
         debug('start');

@@ -5,7 +5,6 @@ import { ServerImpl, ServerInterface } from './rest/serverInterface';
 const config = {
   // serverName: 'https://node0.mando.land:3011',
   serverName: 'http://192.168.1.22:8989',
-  listAllEvents: new Observable<boolean>(),
 };
 
 export type ConfigOpts = {
@@ -13,6 +12,9 @@ export type ConfigOpts = {
 }
 
 export function newConfig(opts: ConfigOpts): ServerInterface {
-  config.listAllEvents = opts.listAllEvents;
-  return new ServerImpl(config);
+  const serverConfig = Object.assign(
+    { listAllEvents: new Observable<boolean>() },
+    config,
+    opts);
+  return new ServerImpl(serverConfig);
 }

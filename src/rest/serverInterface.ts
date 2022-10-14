@@ -29,6 +29,7 @@ export type ServerInterface = {
   listAllEvents: Observable<boolean>;
 
   start: (stopOnError: (err: any) => void) => Promise<() => void>; // return a cleanup function
+  passwordless?: boolean; // for demo config only
 };
 
 /**
