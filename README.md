@@ -50,4 +50,5 @@ Users must contact each other to arrange transport.
 ## Demo Mode
 
 Whether you'd like to see what the front-end looks like for development or demonstration outside of the application data, Authentacat can be displayed by setting the `demoMode` variable in [`index.ts`](src/index.ts).
+Set `passwordless` to `true`, also in [`index.ts`](src/index.ts), to short-circuit authentication in the demo.
 Then run `npm run start` and point your browser to [http://localhost:3000](https://localhost:3000).
