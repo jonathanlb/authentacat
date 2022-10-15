@@ -17,7 +17,7 @@ export type UserInfo = {
 };
 
 export class UserDirectory extends RestClient {
-  userInfo: Map<number, UserInfo>;
+  userInfo: Map<number, Promise<UserInfo>>;
 
   constructor(config: UserDirectoryConfig) {
     super(config);
@@ -27,12 +27,22 @@ export class UserDirectory extends RestClient {
   async getUserInfo(id: number): Promise<UserInfo> {
     let u = this.userInfo.get(id);
     if (u === undefined) {
-      const url = `${this.serverName}/user/get/${id}`;
-      const j = await this.fetchJson(url);
-      debug('fetched', id, j);
-      u = { editor: j.editor, email: j.email, name: j.name, organizer: j.organizer, section: j.section };
+      u = new Promise<UserInfo>((resolve, reject) => {
+        const url = `${this.serverName}/user/get/${id}`;
+        this.fetchJson(url)
+          .then(j => {
+            debug('fetched', id, j);
+            resolve({
+              editor: j.editor,
+              email: j.email,
+              name: j.name,
+              organizer: j.organizer,
+              section: j.section });
+          })
+          .catch(e => reject(e));
+      });
       this.userInfo.set(id, u);
     }
-    return Promise.resolve(u);
+    return u;
   }
 }
