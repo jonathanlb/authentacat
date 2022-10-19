@@ -1,6 +1,8 @@
 // import Debug from 'debug';
 // const debug = Debug('rsvp:dateTime');
 
+import { DateTimeInterestProps } from "./components/DateTimeInterest";
+
 const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
 const TIME_RE = /^([0-9]{1,2})[:/-]?([0-9]{2})$/;
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -45,6 +47,10 @@ export function formatTime(hhmm: string): string {
     hour4Str = hour - 12;
   }
   return `${hour4Str}:${mm} ${hour < 12 ? 'am' : 'pm'}`;
+}
+
+export function isUndecided(dts: Array<DateTimeInterestProps>): boolean {
+  return !Boolean(dts.find(dt => dt.rsvp.getValue() !== 0));
 }
 
 export function lastYear(dOpt?: Date): string {

@@ -22,7 +22,7 @@ import { BehaviorSubject, Observable, Observer, Subject, Subscription } from 'rx
 
 import './EventCard.css';
 import { InterestResponse } from '../aggregate';
-import { formatDate, formatTime } from '../dateTime';
+import { formatDate, formatTime, isUndecided } from '../dateTime';
 import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
 import { InterestReport } from './InterestReport';
 import { RideShare } from '../rideShare';
@@ -33,7 +33,7 @@ import Debug from 'debug';
 
 const debug = Debug('rsvp:component:eventCard');
 
-const RIDESHARE_POPOVER_ID  = 'rideshare-popover';
+const RIDESHARE_POPOVER_ID = 'rideshare-popover';
 
 export type EventCardProps = {
   editable: boolean,
@@ -56,8 +56,8 @@ export type EventCardProps = {
 export function mapDateTimesToResponses(
   dts: Array<DateTimeInterestProps>,
   irs: Observable<Array<InterestResponse>>,
-  )
-: [Map<number, Observable<Array<InterestResponse>>>, Subscription] {
+)
+  : [Map<number, Observable<Array<InterestResponse>>>, Subscription] {
   const result = new Map<number, Subject<Array<InterestResponse>>>();
   dts.forEach(dt => result.set(dt.id, new BehaviorSubject<Array<InterestResponse>>([])));
 
@@ -83,20 +83,32 @@ export function mapDateTimesToResponses(
 
 export function EventCard(props: EventCardProps) {
   debug('render');
-  const [ dateTimeInterest, setDateTimeInterest ] = useState('');
-  const [ descriptionMd, setDescriptionMd ] = useState(props.descriptionMd);
-  const [ editing, setEditing ] = useState(false);
-  const [ rideshareAnchor, setRideshareAnchor] = useState<HTMLButtonElement | null>(null);
-  const [ showInterestReportId, setShowInterestReportId ] = useState(0);
+  const [dateTimeInterest, setDateTimeInterest] = useState('');
+  const [descriptionMd, setDescriptionMd] = useState(props.descriptionMd);
+  const [editing, setEditing] = useState(false);
+  const [undecided, setUndecided] = useState(isUndecided(props.dateTimes));
+  const [rideshareAnchor, setRideshareAnchor] = useState<HTMLButtonElement | null>(null);
+  const [showInterestReportId, setShowInterestReportId] = useState(0);
 
-  const [responses, irSub ] = mapDateTimesToResponses(
+  const [responses, irSub] = mapDateTimesToResponses(
     props.dateTimes, props.interestResponse);
 
+  // monitor responses to clear the undecided flag.
   // clean up interest-response subscription on unmount
   useEffect(() => {
+    const undecidedSubs = undecided
+      ? props.dateTimes.map(dt =>
+        dt.rsvp.subscribe(r => {
+          if (r !== 0) {
+            setUndecided(false);
+          }
+        }))
+      : [] as Array<Subscription>;
+
     return () => {
       debug('unmount and unsubscribe');
       irSub.unsubscribe();
+      undecidedSubs.forEach(s => s.unsubscribe());
     }
   });
 
@@ -131,17 +143,17 @@ export function EventCard(props: EventCardProps) {
   const isRideshareOpen = Boolean(rideshareAnchor);
   const rideshareId = isRideshareOpen ? RIDESHARE_POPOVER_ID : undefined;
 
-  return(
-    <Card className="EventCard" raised={true}>
+  return (
+    <Card className={`${undecided ? 'Undecided' : ''} EventCard`} raised={true}>
       <Accordion>
         <AccordionSummary expandIcon={<Tooltip title="Show/hide event details"><ExpandMore /></Tooltip>}>
           <Typography variant="h3" color="text.primary">
-            { props.name }
+            {props.name}
           </Typography>
         </AccordionSummary>
 
         <AccordionDetails className='EventDetails'>
-          { props.editable && editing ?
+          {props.editable && editing ?
             null :
             <Tooltip title='Edit markdown event description'>
               <IconButton sx={{ position: 'absolute' }}
@@ -153,11 +165,11 @@ export function EventCard(props: EventCardProps) {
             </Tooltip>
           }
 
-          { props.editable && editing ?
-            <Box sx={{width: '100%' }}>
-              <TextField id='eventEditor' multiline={ true } defaultValue={ descriptionMd } sx={{width: '80%' }}/>
+          {props.editable && editing ?
+            <Box sx={{ width: '100%' }}>
+              <TextField id='eventEditor' multiline={true} defaultValue={descriptionMd} sx={{ width: '80%' }} />
               <Tooltip title='Save markdown event description'>
-                <IconButton 
+                <IconButton
                   className='EditEventButton'
                   onClick={handleSaveClick}
                 >
@@ -166,7 +178,7 @@ export function EventCard(props: EventCardProps) {
               </Tooltip>
             </Box> :
             <ReactMarkdown className='EventDescriptionDiv'>
-              { descriptionMd }
+              {descriptionMd}
             </ReactMarkdown>
           }
 
@@ -191,7 +203,7 @@ export function EventCard(props: EventCardProps) {
               anchorOrigin={{ vertical: "top", horizontal: "right" }}
               transformOrigin={{ vertical: "top", horizontal: "right" }}
             >
-              <RideShareCard 
+              <RideShareCard
                 expressRideShare={props.expressRideShare}
                 rideShares={props.rideShares} />
             </Popover>
@@ -200,38 +212,38 @@ export function EventCard(props: EventCardProps) {
         </AccordionDetails>
       </Accordion>
 
-      { showInterestReportId > 0
+      {showInterestReportId > 0
         ? <InterestReport
-            hideF={handleHideInterestReport} 
-            time={dateTimeInterest}
-            responses={responses.get(showInterestReportId) as Observable<Array<InterestResponse>>}/>
+          hideF={handleHideInterestReport}
+          time={dateTimeInterest}
+          responses={responses.get(showInterestReportId) as Observable<Array<InterestResponse>>} />
         : <Card className="DateTimesDiv">
-            { props.dateTimes.map((dt, i) =>
-               <Box sx={{
-                 display: 'flex',
-                 flexDirection: 'row',
-                 width: '100%',
-               }} 
-               key={`dt-choice-${i}`} >
-               <Box sx={{ width: props.showAdmin ? '90%' : '100%' }}>
-                 <DateTimeInterest {...dt} key={i} />
-               </Box>
+          {props.dateTimes.map((dt, i) =>
+            <Box sx={{
+              display: 'flex',
+              flexDirection: 'row',
+              width: '100%',
+            }}
+              key={`dt-choice-${i}`} >
+              <Box sx={{ width: props.showAdmin ? '90%' : '100%' }}>
+                <DateTimeInterest {...dt} key={i} />
+              </Box>
 
-               { props.showAdmin
-                   ? <Tooltip title="Show RSVP summary report">
-                      <Button 
-                        data-testid={`show-rsvp-details-${dt.id}`}
-                        aria-label="show rsvp details"
-                        sx={{ width: '10%' }}
-                        onClick={e => handleShowInterestReport(dt)}>
-                        <ExpandMore />
-                      </Button>
-                    </Tooltip>
-                   : null
-               } 
-               </Box>
-        )}
-      </Card>
+              {props.showAdmin
+                ? <Tooltip title="Show RSVP summary report">
+                  <Button
+                    data-testid={`show-rsvp-details-${dt.id}`}
+                    aria-label="show rsvp details"
+                    sx={{ width: '10%' }}
+                    onClick={e => handleShowInterestReport(dt)}>
+                    <ExpandMore />
+                  </Button>
+                </Tooltip>
+                : null
+              }
+            </Box>
+          )}
+        </Card>
       }
     </Card>
   );

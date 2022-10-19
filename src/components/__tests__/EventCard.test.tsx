@@ -22,7 +22,10 @@ test('event card renders', () => {
   }];
 
   const props = {
+    descriptionEdits: new Subject<string>(),
     descriptionMd: '# Huzzah\n\nMuch ceremony',
+    editable: true,
+    expressRideShare: new Subject<RideShare>(),
     name: 'Testing Coverage Gala',
     venue: venue,
     dateTimes: dateTimes,
@@ -44,7 +47,10 @@ test('event card shows interest report', async () => {
   }];
 
   const props = {
+    descriptionEdits: new Subject<string>(),
     descriptionMd: '# Huzzah\n\nMuch ceremony',
+    editable: false,
+    expressRideShare: new Subject<RideShare>(),
     name: 'Testing Coverage Gala',
     venue: venue,
     dateTimes: dateTimes,
@@ -71,7 +77,10 @@ test('event card hides interest report', async () => {
   }];
 
   const props = {
+    descriptionEdits: new Subject<string>(),
     descriptionMd: '# Huzzah\n\nMuch ceremony',
+    editable: false,
+    expressRideShare: new Subject<RideShare>(),
     name: 'Testing Coverage Gala',
     venue: venue,
     dateTimes: dateTimes,
@@ -133,9 +142,9 @@ test('separate event interest to dates', done => {
   });
 
   irs.next([
-    { dt: 1, name: 'Alice', section: 'alto', rsvp: 1 },
-    { dt: 2, name: 'Alice', section: 'alto', rsvp: -1 },
-    { dt: 2, name: 'Bob', section: 'baritone', rsvp: -1 },
+    { dt: 1, email: 'a@b.com', name: 'Alice', section: 'alto', rsvp: 1 },
+    { dt: 2, email: 'a@b.com', name: 'Alice', section: 'alto', rsvp: -1 },
+    { dt: 2, email: 'b@c.com', name: 'Bob', section: 'baritone', rsvp: -1 },
   ]);
 
   sub.unsubscribe();
