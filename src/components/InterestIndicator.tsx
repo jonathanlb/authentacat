@@ -1,5 +1,3 @@
-import React from 'react';
-
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
@@ -13,19 +11,20 @@ export type InterestIndicatorProps = {
 };
 
 export function InterestIndicator(props: InterestIndicatorProps) {
-  const { numMaybe, numNo, numYes } = props;
-  const numResponses = numMaybe + numNo + numYes;
+  const { numMaybe = 0, numNo = 0, numYes = 0 } = props;
+  // pad the number of responses to make empty count stripes appear.
+  const numResponses3 = 3 + numMaybe + numNo + numYes;
 
   function noWidth(): string {
-    return `${100*numNo/numResponses}%`;
+    return `${100*(numNo+1)/numResponses3}%`;
   }
 
   function maybeWidth(): string {
-    return `${100*numMaybe/numResponses}%`;
+    return `${100*(numMaybe+1)/numResponses3}%`;
   }
 
   function yesWidth(): string {
-    return `${100*numYes/numResponses}%`;
+    return `${100*(numYes+1)/numResponses3}%`;
   }
 
   return(
