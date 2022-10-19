@@ -29,6 +29,8 @@ export function RollCallTab(props: RollCallTabProps) {
     responses: Array<InterestResponse>) 
   {
     if (!(props.hideNonResponses && !responses.length)) {
+      responses.sort((a, b) => a.name.localeCompare(b.name));
+
       return (
         <Box>
           

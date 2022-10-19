@@ -1,6 +1,5 @@
-import Debug from 'debug';
-
-const debug = Debug('rsvp:dateTime');
+// import Debug from 'debug';
+// const debug = Debug('rsvp:dateTime');
 
 const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
 const TIME_RE = /^([0-9]{1,2})[:/-]?([0-9]{2})$/;
