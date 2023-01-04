@@ -33,7 +33,7 @@ Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) i
 using [AWS amplify](https://aws.amazon.com/amplify/),
 which will write authentication configuration to 
 [`src/aws-exports.js`](https://docs.amplify.aws/lib/client-configuration/configuring-amplify-categories/q/platform/js/).
-- Update `favicon.ico` and `logo.png' in `public` (or in `build` if you skipped to the next step.)
+- Update `favicon.ico` and `logo*.png' in `public` (or in `build` if you skipped to the next step.)
 - Run `npm run build` and copy or link the the contents of `build/` to your webserver.
 
 ### Ridesharing coordination
