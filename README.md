@@ -24,12 +24,16 @@ Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) i
 
 ## Deployment
 
-- Update `config.serverName` in [config.ts](src/config.ts) to point to an end point handled by [the Cat-Wrangler back end](https://github.com/jonathanlb/cat-wrangler-v2).
+- In [config.ts](src/config.ts)
+  - Update `config.serverName` in [config.ts](src/config.ts) to point to an end point handled by [the Cat-Wrangler back end](https://github.com/jonathanlb/cat-wrangler-v2).
+  - Edit `config.homeHref` to an homepage URL within your organization suitable for a logo.
+  - Edit `config.logoAltTxt` to a text description of your logo.
 - Update/add the `homepage` field in [package.json](package.json) if the endpoint is not at the top-level.
 - [Setup a Cognito identity pool](https://docs.amplify.aws/lib/auth/getting-started/q/platform/js/)
 using [AWS amplify](https://aws.amazon.com/amplify/),
 which will write authentication configuration to 
 [`src/aws-exports.js`](https://docs.amplify.aws/lib/client-configuration/configuring-amplify-categories/q/platform/js/).
+- Update `favicon.ico` and `logo.png' in `public` (or in `build` if you skipped to the next step.)
 - Run `npm run build` and copy or link the the contents of `build/` to your webserver.
 
 ### Ridesharing coordination

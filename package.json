@@ -1,6 +1,6 @@
 {
   "name": "authentacat-react",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "private": true,
   "dependencies": {
     "@aws-amplify/ui-react": "^3.5.7",

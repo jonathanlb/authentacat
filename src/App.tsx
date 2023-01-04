@@ -13,6 +13,7 @@ import { ThemeProvider } from '@mui/material';
 
 import { handleErrorSignOut } from './App.util';
 import { AppHeader } from './components/AppHeader';
+import { config } from './config';
 import { EventContent } from './components/EventContent';
 import { ServerInterface } from './rest/serverInterface';
 
@@ -40,12 +41,12 @@ function App(props: AppProps) {
     return (
       <ThemeProvider theme={theme}>
         <Card className="App">
-          <AppHeader homeHref="https://mnmando.org"
+          <AppHeader homeHref={config.homeHref}
             filter={eventFilter}
             latestEventFirst={props.latestEventFirst}
             listAllEvents={props.listAllEvents}
             logoImageSrc="logo.png"
-            logoImageSrcAlt="Minnesota Mandolin Orchestra logo"
+            logoImageSrcAlt={config.logoAltTxt}
             signOut={signOut}
             userName={userName} />
           <EventContent
