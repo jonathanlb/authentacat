@@ -33,11 +33,10 @@ export function formatDateTime(dt: DateTimeInterestProps): string {
 }
 
 export function DateTimeInterest(props: DateTimeInterestProps) {
-  debug('render', props);
-
   const formattedDateTime = formatDateTime(props);
   const [ rsvp, setRsvp ] = useState(props.rsvp.getValue());
   const [ rsvpCount, setCount ] = useState(props.rsvpCount.getValue());
+  debug('render', props, rsvp, rsvpCount);
 
   useEffect(() => {
     const sub = props.rsvp.subscribe(setRsvp);
@@ -65,6 +64,9 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
     }
     if (newValue !== rsvp) {
       const tmpCount = Object.assign({}, rsvpCount);
+      tmpCount.maybe = tmpCount.maybe || 0;
+      tmpCount.no = tmpCount.no || 0;
+      tmpCount.yes = tmpCount.yes || 0;
       if (rsvp > 0) {
         tmpCount.yes -= 1;
       } else if (rsvp < 0) {
@@ -80,6 +82,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
       } else {
         tmpCount.maybe += 1;
       }
+      debug('handleSlider next', newValue, tmpCount);
       props.rsvp.next(newValue);
       setRsvp(newValue);
       setCount(tmpCount);
