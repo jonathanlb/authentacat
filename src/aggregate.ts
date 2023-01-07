@@ -16,6 +16,8 @@ export type RsvpCount = {
   maybe: number;
 };
 
+export const NO_COUNT: RsvpCount = { yes: 0, no: 0, maybe: 0 };
+
 export type SectionResponse = {
   section: string;
   affirmatives: number;

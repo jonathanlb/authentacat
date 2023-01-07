@@ -8,9 +8,9 @@ import { take } from 'rxjs/operators';
 import { EventCard, EventCardProps } from './EventCard';
 
 export type EventContentProps = {
-  eventCards: Observable<Array<EventCardProps>>; // getValue only here
+  eventCards: Observable<Array<EventCardProps>>;
   filter: Observable<string>;
-  latestEventFirst: BehaviorSubject<boolean>; // getValue only here
+  latestEventFirst: BehaviorSubject<boolean>;
   showRideShare?: boolean;
   userName?: string;
 };
@@ -37,7 +37,7 @@ export function EventContent(props: EventContentProps) {
   const [ eventCards, setEventCards ] = useState([] as Array<EventCardProps>);
   const [ filter, setFilter ] = useState('');
   const [ showRsvpDetails, setShowRsvpDetails ] = useState(false);
-  const [ latestEventFirst, setLatestEventFirst ] = useState(props.latestEventFirst.getValue());
+  const [ latestEventFirst, setLatestEventFirst ] = useState(false);
 
   useEffect(() => {
     const ecSub = props.eventCards.subscribe(setEventCards);

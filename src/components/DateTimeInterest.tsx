@@ -11,7 +11,7 @@ import ThumbDown from '@mui/icons-material/ThumbDown';
 import ThumbUp from '@mui/icons-material/ThumbUp';
 
 import './DateTimeInterest.css';
-import { RsvpCount } from '../aggregate';
+import { NO_COUNT, RsvpCount } from '../aggregate';
 import { formatDate, formatTime } from '../dateTime';
 import { InterestIndicator } from './InterestIndicator';
 
@@ -34,8 +34,8 @@ export function formatDateTime(dt: DateTimeInterestProps): string {
 
 export function DateTimeInterest(props: DateTimeInterestProps) {
   const formattedDateTime = formatDateTime(props);
-  const [ rsvp, setRsvp ] = useState(props.rsvp.getValue());
-  const [ rsvpCount, setCount ] = useState(props.rsvpCount.getValue());
+  const [ rsvp, setRsvp ] = useState(0);
+  const [ rsvpCount, setCount ] = useState(NO_COUNT);
   debug('render', props, rsvp, rsvpCount);
 
   useEffect(() => {
