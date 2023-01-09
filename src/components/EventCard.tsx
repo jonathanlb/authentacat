@@ -86,7 +86,7 @@ export function EventCard(props: EventCardProps) {
   const [dateTimeInterest, setDateTimeInterest] = useState('');
   const [descriptionMd, setDescriptionMd] = useState(props.descriptionMd);
   const [editing, setEditing] = useState(false);
-  const [undecided, setUndecided] = useState(isUndecided(props.dateTimes));
+  const [undecided, setUndecided] = useState(true);
   const [rideshareAnchor, setRideshareAnchor] = useState<HTMLButtonElement | null>(null);
   const [showInterestReportId, setShowInterestReportId] = useState(0);
 
@@ -96,21 +96,13 @@ export function EventCard(props: EventCardProps) {
   // monitor responses to clear the undecided flag.
   // clean up interest-response subscription on unmount
   useEffect(() => {
-    const undecidedSubs = undecided
-      ? props.dateTimes.map(dt =>
-        dt.rsvp.subscribe(r => {
-          if (r !== 0) {
-            setUndecided(false);
-          }
-        }))
-      : [] as Array<Subscription>;
-
+    const undecidedSub = isUndecided(props.dateTimes).subscribe(setUndecided);
     return () => {
       debug('unmount and unsubscribe');
       irSub.unsubscribe();
-      undecidedSubs.forEach(s => s.unsubscribe());
+      undecidedSub.unsubscribe();
     }
-  });
+  }, [props.dateTimes, irSub, setUndecided]);
 
   function handleEditClick() {
     setEditing(true);

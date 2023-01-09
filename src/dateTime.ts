@@ -1,6 +1,7 @@
 // import Debug from 'debug';
 // const debug = Debug('rsvp:dateTime');
 
+import { combineLatest, map, Observable } from "rxjs";
 import { DateTimeInterestProps } from "./components/DateTimeInterest";
 
 const DATE_RE = /^([0-9]{4})[/-]?([0-9]{1,2})[/-]?([0-9]{1,2})$/;
@@ -49,8 +50,11 @@ export function formatTime(hhmm: string): string {
   return `${hour4Str}:${mm} ${hour < 12 ? 'am' : 'pm'}`;
 }
 
-export function isUndecided(dts: Array<DateTimeInterestProps>): boolean {
-  return !Boolean(dts.find(dt => dt.rsvp.getValue() !== 0));
+export function isUndecided(dts: Array<DateTimeInterestProps>): Observable<boolean> {
+  return combineLatest(dts.map(dt => dt.readRsvp))
+    .pipe(map((rsvps: Array<number>, _: number) => {
+      return rsvps.findIndex(r => r !== 0) < 0;
+    }));
 }
 
 export function lastYear(dOpt?: Date): string {

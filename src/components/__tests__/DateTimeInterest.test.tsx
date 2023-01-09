@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BehaviorSubject } from 'rxjs';
 import '../mockSlider';
@@ -10,6 +9,7 @@ test('date time interest renders', () => {
     hhmm: '21:15',
     yyyymmdd: '2022-07-09',
     duration: '93m',
+    readRsvp: new BehaviorSubject(0),
     rsvp: new BehaviorSubject(0),
     rsvpCount: new BehaviorSubject({ yes: 11, no: 9, maybe: 7 }),
   };
@@ -28,6 +28,7 @@ test('date time interest forwards rsvp updates', (done) => {
     hhmm: '21:15',
     yyyymmdd: '2022-07-09',
     duration: '93m',
+    readRsvp: rsvp,
     rsvp: rsvp,
     rsvpCount: new BehaviorSubject({ yes: 11, no: 9, maybe: 7 }),
   };
@@ -46,6 +47,7 @@ test('date time interest forwards count updates', () => {
     hhmm: '21:15',
     yyyymmdd: '2022-07-09',
     duration: '93m',
+    readRsvp: rsvp,
     rsvp: rsvp,
     rsvpCount: rsvpCount,
   };

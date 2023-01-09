@@ -114,7 +114,8 @@ export class ServerImpl extends RestClient {
         hhmm: dt.hhmm,
         yyyymmdd: dt.yyyymmdd,
         duration: dt.duration,
-        rsvp: this.rsvpReporter.getRsvp(dt.event, dt.id),
+        readRsvp: this.rsvpReporter.getRsvp(dt.event, dt.id),
+        rsvp: this.rsvpReporter.sendRsvp(dt.event, dt.id),
         rsvpCount: this.interestReporter.getDateTimeInterestCount(dt.event, dt.id),
       };        
     }) as Array<DateTimeInterestProps>;

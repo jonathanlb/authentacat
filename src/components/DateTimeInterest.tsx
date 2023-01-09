@@ -5,7 +5,7 @@ import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
-import { BehaviorSubject } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 
 import ThumbDown from '@mui/icons-material/ThumbDown';
 import ThumbUp from '@mui/icons-material/ThumbUp';
@@ -24,8 +24,9 @@ export type DateTimeInterestProps = {
   hhmm: string,
   yyyymmdd: string,
   duration: string,
-  rsvp: BehaviorSubject<number>, // only call next
-  rsvpCount: BehaviorSubject<RsvpCount>, // only call subscribe
+  readRsvp: Observable<number>,
+  rsvp: Observer<number>,
+  rsvpCount: Observable<RsvpCount>,
 };
 
 export function formatDateTime(dt: DateTimeInterestProps): string {
@@ -39,9 +40,9 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
   debug('render', props, rsvp, rsvpCount);
 
   useEffect(() => {
-    const sub = props.rsvp.subscribe(setRsvp);
+    const sub = props.readRsvp.subscribe(setRsvp);
     return () => sub.unsubscribe();
-  }, [ props.rsvp ]);
+  }, [ props.readRsvp ]);
 
   useEffect(() => {
     const sub = props.rsvpCount.subscribe(setCount);
@@ -106,7 +107,7 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
         <Slider
           aria-label="RSVP"
           data-testid={`date-time-interest-slider-${props.id}`}
-          defaultValue={ props.rsvp.getValue() }
+          defaultValue={ rsvp }
           value={ rsvp }
           min={-1} max={1} step={1} 
           onChange={handleSlider}/>

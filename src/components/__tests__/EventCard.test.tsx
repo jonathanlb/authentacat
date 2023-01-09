@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { BehaviorSubject, Subject } from 'rxjs';
 
@@ -12,12 +11,15 @@ const venue = {
 };
 
 test('event card renders', () => {
+  const rsvp = new BehaviorSubject(0);
+
   const dateTimes = [{
     id: 19,
     hhmm: '20:15',
     yyyymmdd: '2022-07-01',
     duration: '91m',
-    rsvp: new BehaviorSubject(0),
+    readRsvp: rsvp,
+    rsvp: rsvp,
     rsvpCount: new BehaviorSubject({yes: 11, no: 9, maybe: 7}),
   }];
 
@@ -37,12 +39,14 @@ test('event card renders', () => {
 });
 
 test('event card shows interest report', async () => {
+  const rsvp = new BehaviorSubject(0);
   const dateTimes = [{
     id: 19,
     hhmm: '20:15',
     yyyymmdd: '2022-07-01',
     duration: '91m',
-    rsvp: new BehaviorSubject(0),
+    readRsvp: rsvp,
+    rsvp: rsvp,
     rsvpCount: new BehaviorSubject({yes: 11, no: 9, maybe: 7}),
   }];
 
@@ -67,12 +71,15 @@ test('event card shows interest report', async () => {
 });
 
 test('event card hides interest report', async () => {
+  const rsvp = new BehaviorSubject(0);
+
   const dateTimes = [{
     id: 19,
     hhmm: '20:15',
     yyyymmdd: '2022-07-01',
     duration: '91m',
-    rsvp: new BehaviorSubject(0),
+    readRsvp: rsvp,
+    rsvp: rsvp,
     rsvpCount: new BehaviorSubject({yes: 11, no: 9, maybe: 7}),
   }];
 
@@ -103,17 +110,20 @@ test('event card hides interest report', async () => {
 });
 
 test('separate event interest to dates', done => {
+  const rsvps = [ new BehaviorSubject(0), new BehaviorSubject(0)];
   const dts = [
     {
       id: 1, hhmm: '16:00',
       yyyymmdd: '2020-04-20', duration: 'test-1',
-      rsvp: new BehaviorSubject(0),
+      readRsvp: rsvps[0],
+      rsvp: rsvps[0],
       rsvpCount: new BehaviorSubject({ yes: 1, no: 1, maybe: 1 }),
     },
     {
       id: 2, hhmm: '18:00',
       yyyymmdd: '2020-04-21', duration: 'test-2',
-      rsvp: new BehaviorSubject(0),
+      readRsvp: rsvps[1],
+      rsvp: rsvps[1],
       rsvpCount: new BehaviorSubject({ yes: 2, no: 2, maybe: 2 }),
     },
   ];

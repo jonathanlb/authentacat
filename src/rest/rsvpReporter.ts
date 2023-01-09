@@ -1,6 +1,5 @@
 import Debug from 'debug';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { skip } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Observer, Subject, Subscription } from 'rxjs';
 import { RestClient } from './restClient';
 
 const debug = Debug('rsvp:rsvpReporter');
@@ -11,26 +10,27 @@ export type RsvpReporterConfig = {
 };
 
 /**
- * Store pairs of subjects used forward updates from the client (to subscribers
- * and server) and from the server (excludes the server listening for changes),
- * respectively.
- */
-type RsvpPair = {
-  clientUpdates: BehaviorSubject<number>;
-  serverUpdates: Subject<number>;
-}
-
-/**
  * Behavior to retrieve and report the user's rsvps for events.
  */
 export class RsvpReporter extends RestClient {
-  rsvps: Map<number, RsvpPair>;
+  /** 
+   * DateTime to BehaviorSubject used by clients to send rsvp changes. 
+   */
+  clientSends: Map<number, Subject<number>>;
+
+  /** 
+   * DateTime to BehaviorSubject used by clients to receive rsvp changes. 
+   * We use BehaviorSubjects to ensure that there is always one event to replay
+   * upon new subscription.
+   */
+  clientUpdates: Map<number, BehaviorSubject<number>>;
   rsvpSub: Array<Subscription>;
 
   constructor(config: RsvpReporterConfig) {
     super(config);
     this.rsvpSub = [];
-    this.rsvps = new Map();
+    this.clientSends = new Map();
+    this.clientUpdates = new Map();
   }
 
   /** Clean up after use, say if the instance is used inside a component that unmounts. */
@@ -40,78 +40,54 @@ export class RsvpReporter extends RestClient {
 
   /** 
    * Get the user's previous RSVPs for the event from the server.
+   * TODO: expose refresh.
    */
-  getRsvp(eventId: number, dtId: number): BehaviorSubject<number> {
-    let rsvp = this.rsvps.get(dtId);
-    if (rsvp !== undefined) {
-      debug('getRsvp', eventId, dtId);
-      return rsvp.clientUpdates;
-    }
+  getRsvp(eventId: number, dtId: number): Observable<number> {
+    let rsvp = this.clientUpdates.get(dtId);
+    if (!rsvp) {
+      rsvp = new BehaviorSubject(0);
+      this.clientUpdates.set(dtId, rsvp);
 
-    rsvp = this.wireUserResponseToServer(eventId, dtId, 0);
-
-    const url = `${this.serverName}/event/rsvp/${eventId}`;
-    debug('getEventRsvp', url);
-    this.fetchJson(url)
-      .then(dtXr => {
+      const url = `${this.serverName}/event/rsvp/${eventId}`;
+      debug('getEventRsvp', url);
+      this.fetchJson(url).then(dtXr => {
         // inform others of the rsvp downloaded
         debug('gotEventRsvp', dtXr);
         Object.entries(dtXr).forEach(kv => {
           const dtIdFromServer = Number(kv[0]);
           const r = kv[1] as number;
-          let s = this.rsvps.get(dtIdFromServer);
-          if (s === undefined) {
-            s = this.wireUserResponseToServer(eventId, dtIdFromServer, r);
-          }
+          let s = this.clientUpdates.get(dtIdFromServer);
+
           debug('next', eventId, dtIdFromServer, r);
-          s.serverUpdates.next(r);  // do not to inform server from here
+          if (s === undefined) {
+            s = new BehaviorSubject(r);
+            this.clientUpdates.set(dtIdFromServer, s);
+          } else {
+            s.next(r);
+          }
         });
-      }); // XXX catch error
-    return rsvp.clientUpdates;
+      });
+    }
+    return rsvp as Subject<number>;
   }
 
   /**
-   * Create a new Subject that pushes a user's RSVP response to server tied
-   * to a subject that we use to push updates from the server around this app.
-   * 
-   * @param dtId date time id
-   * @param response rsvp value from -1/0/1
-   * @returns A memoized subject pair that can be used to send changes to the 
-   *   server and just to client subscribers, respectively.
+   * Get a channel to send update to the server and other listeners.
    */
-  wireUserResponseToServer(eventId: number, dtId: number, response: number): RsvpPair {
-    debug('wire', eventId, dtId, response);
-    const serverUpdates = new Subject<number>(); 
-    const clientUpdates = new BehaviorSubject(response);
-
-    // Hack keeps some state here to allow filtering of values to prevent
-    // updates from server bouncing back:
-    //
-    // Forward all updates from serverUpdates to clientUpdates so that widgets 
-    // can redraw, etc.
-    // Save the last value seen-from or pushed-to the server to avoid redundant
-    // updates. 
-    let valueAtServer: number | undefined;
-    let sub = serverUpdates.subscribe(r  => {
-      debug('wired', valueAtServer, r);
-      valueAtServer = r;
-      clientUpdates.next(r);
-    });
-    this.rsvpSub.push(sub)
-    
-    sub = clientUpdates.pipe(skip(1)).subscribe(x => { // avoid initial default/dummy value from Behavior init.
-      debug('wire check', valueAtServer, x);
-      if (x !== valueAtServer) {
-        const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${x}`;
+  sendRsvp(eventId: number, dtId: number): Observer<number> {
+    let out = this.clientSends.get(dtId);
+    if (!out) {
+      out = new Subject();
+      this.clientSends.set(dtId, out);
+      out.subscribe((rsvp: number) => {
+        const url = `${this.serverName}/event/rsvp/${eventId}/${dtId}/${rsvp}`;
         debug('rsvpPush', url);
-        this.fetch(url); // XXX catch error
-        valueAtServer = x;
-      }
-    });
-    this.rsvpSub.push(sub);
-    
-    const rsvp = { clientUpdates, serverUpdates };
-    this.rsvps.set(dtId, rsvp);
-    return rsvp;
+        this.fetch(url);
+
+        // propogate the event back to any local subscribers.
+        (this.getRsvp(eventId, dtId) as BehaviorSubject<number>).next(rsvp);
+      });
+    }
+    return out as Subject<number>
   }
 }
