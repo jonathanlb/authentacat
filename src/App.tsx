@@ -8,6 +8,7 @@ import '@aws-amplify/ui-react/styles.css';
 
 import { BehaviorSubject } from 'rxjs';
 
+import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import { ThemeProvider } from '@mui/material';
 
@@ -15,6 +16,7 @@ import { handleErrorSignOut } from './App.util';
 import { AppHeader } from './components/AppHeader';
 import { config } from './config';
 import { EventContent } from './components/EventContent';
+import { LoginInfo } from './LoginInfo';
 import { ServerInterface } from './rest/serverInterface';
 
 import theme from './theme';
@@ -67,13 +69,16 @@ function App(props: AppProps) {
     return createContent(userName, signOut);
   } else {
     return (
-      <Authenticator>
-        {({ signOut, user }) => {
-          unsub = handleErrorSignOut(props.config, signOut as () => void);
-          const userName = user?.attributes?.name || '???';
-          return createContent(userName, signOut);
-        }}
-      </Authenticator>
+      <Box className='LoginBox'>
+        <Authenticator>
+          {({ signOut, user }) => {
+            unsub = handleErrorSignOut(props.config, signOut as () => void);
+            const userName = user?.attributes?.name || '???';
+            return createContent(userName, signOut);
+          }}
+        </Authenticator>
+        <LoginInfo />
+      </Box>
     );
   }
 }
