@@ -68,16 +68,20 @@ function App(props: AppProps) {
     props.config.start(signOut);
     return createContent(userName, signOut);
   } else {
+    const authComps = {
+      Footer: () => {
+        return <LoginInfo />
+      }
+    }
     return (
       <Box className='LoginBox'>
-        <Authenticator>
+        <Authenticator components={authComps}>
           {({ signOut, user }) => {
             unsub = handleErrorSignOut(props.config, signOut as () => void);
             const userName = user?.attributes?.name || '???';
             return createContent(userName, signOut);
           }}
         </Authenticator>
-        <LoginInfo />
       </Box>
     );
   }

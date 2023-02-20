@@ -4,7 +4,7 @@ import { Box, Link, List, ListItem, ListItemIcon, ListItemText, Tooltip, Typogra
 export function LoginInfo() {
     // Edit the following content to suit your site.
     return (
-        <Box>
+        <Box className='LoginInstructionsBox'>
             <Typography variant='h3'>
                 Login Instructions
             </Typography>
