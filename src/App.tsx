@@ -75,7 +75,7 @@ function App(props: AppProps) {
     }
     return (
       <Box className='LoginBox'>
-        <Authenticator components={authComps}>
+        <Authenticator components={authComps} hideSignUp >
           {({ signOut, user }) => {
             unsub = handleErrorSignOut(props.config, signOut as () => void);
             const userName = user?.attributes?.name || '???';
