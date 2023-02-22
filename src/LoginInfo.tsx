@@ -28,6 +28,7 @@ export function LoginInfo() {
                         </Tooltip>
                     </ListItemIcon>
                     <ListItemText>Enter your password into the Password field above.
+                        The password used here is not linked-to/used-by other websites.
                         Consider using your browser's password manager.
                     </ListItemText>
                 </ListItem>
@@ -40,8 +41,6 @@ export function LoginInfo() {
                     <ListItemText>
                         <Typography>
                             If you forgot your password, click the "Forgot your password link", enter your email, and click "Send code".
-                        </Typography>
-                        <Typography>
                             You will receive an email from no-reply@verificationemail.com with content like:
                         </Typography>
                         <pre>

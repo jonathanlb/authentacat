@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import IconButton from '@mui/material/IconButton';
+import Link from '@mui/material/Link';
 import Popover from '@mui/material/Popover';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
@@ -25,13 +26,28 @@ export type AppHeaderProps = {
   homeHref: string;
   latestEventFirst: BehaviorSubject<boolean>;
   listAllEvents: BehaviorSubject<boolean>;
-  logoImageSrc: string
+  logoImageSrc: string;
   logoImageSrcAlt?: string;
   signOut?: (data: any) => void;
   userName: string;
 }
 
+export type HeaderImageProps = {
+  homeHref: string;
+  logoImageSrc: string;
+  logoImageSrcAlt?: string;
+}
+
 const SETTINGS_POPOVER_ID = 'settings-popover';
+
+export function headerImage(props: HeaderImageProps) {
+  return <Link className="LogoHref"
+    href={props.homeHref}>
+    <img className="LogoImg"
+      src={props.logoImageSrc}
+      alt={props.logoImageSrcAlt || "logo"} />
+  </Link>
+}
 
 export function AppHeader(props: AppHeaderProps) {
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLButtonElement | null>(null);
@@ -74,13 +90,7 @@ export function AppHeader(props: AppHeaderProps) {
 
   return (
     <Box className="AppHeader">
-      <a className="LogoHref"
-        href={props.homeHref}>
-        <img className="LogoImg"
-          src={props.logoImageSrc}
-          alt={props.logoImageSrcAlt || "logo"} />
-      </a>
-
+      { headerImage(props) }
       <Typography className="UserNameNotice">
         Welcome, {props.userName}
       </Typography>

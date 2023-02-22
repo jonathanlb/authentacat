@@ -13,7 +13,7 @@ import Card from '@mui/material/Card';
 import { ThemeProvider } from '@mui/material';
 
 import { handleErrorSignOut } from './App.util';
-import { AppHeader } from './components/AppHeader';
+import { AppHeader, headerImage } from './components/AppHeader';
 import { config } from './config';
 import { EventContent } from './components/EventContent';
 import { LoginInfo } from './LoginInfo';
@@ -47,7 +47,7 @@ function App(props: AppProps) {
             filter={eventFilter}
             latestEventFirst={props.latestEventFirst}
             listAllEvents={props.listAllEvents}
-            logoImageSrc="logo.png"
+            logoImageSrc='logo.png'
             logoImageSrcAlt={config.logoAltTxt}
             signOut={signOut}
             userName={userName} />
@@ -71,6 +71,13 @@ function App(props: AppProps) {
     const authComps = {
       Footer: () => {
         return <LoginInfo />
+      },
+      Header: () => {
+        return headerImage({
+          homeHref: config.homeHref,
+          logoImageSrc: 'logo.png',
+          logoImageSrcAlt: config.logoAltTxt
+        });
       }
     }
     return (
