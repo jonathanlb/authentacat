@@ -15,7 +15,9 @@ export function handleErrorSignOut(
   function errorSignOut(signOut: () => void, err: any) {
     errors('handleErrorSignOut', err.message, err);
     const errMsg = err.message || 'unknown';
-    window.alert('error: ' + errMsg + '\rLogin again or contact your administrator.');
+    window.alert('error message: ' + errMsg +
+      '\r\rPlease refresh the page and login again. ' +
+      'If the problem persists, contact your administrator to report the error message above.');
     signOut();
   }
 

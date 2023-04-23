@@ -138,10 +138,12 @@ export function EventCard(props: EventCardProps) {
   return (
     <Card className={`${undecided ? 'Undecided' : ''} EventCard`} raised={true}>
       <Accordion>
-        <AccordionSummary expandIcon={<Tooltip title="Show/hide event details"><ExpandMore /></Tooltip>}>
-          <Typography variant="h3" color="text.primary">
-            {props.name}
-          </Typography>
+        <AccordionSummary expandIcon={<Tooltip title="Click to show/hide event details"><ExpandMore /></Tooltip>}>
+          <Tooltip title="Click to show/hide event details">
+            <Typography variant="h3" color="text.primary">
+              {props.name}
+            </Typography>
+          </Tooltip>
         </AccordionSummary>
 
         <AccordionDetails className='EventDetails'>

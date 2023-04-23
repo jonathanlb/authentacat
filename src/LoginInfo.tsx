@@ -16,9 +16,9 @@ export function LoginInfo() {
                         </Tooltip>
                     </ListItemIcon>
                     <ListItemText>
-                        Use your email address used on the
-                        &nbsp;<Link href="https://mnmando.org/roster">roster</Link>
-                        &nbsp;in the Email field above.
+                        Use your email address used on
+                        the <Link href="https://mnmando.org/roster">roster</Link> in
+                        the Email field above.
                     </ListItemText>
                 </ListItem>
                 <ListItem alignItems="flex-start">
