@@ -1,21 +1,19 @@
-import { useEffect, useState } from 'react';
+import { Event as EventIcon } from '@mui/icons-material';
+import ThumbDown from '@mui/icons-material/ThumbDown';
+import ThumbUp from '@mui/icons-material/ThumbUp';
 import Box from '@mui/material/Box';
+import IconButton from '@mui/material/IconButton';
 import Slider from '@mui/material/Slider';
 import Stack from '@mui/material/Stack';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-
+import Debug from 'debug';
+import { useEffect, useState } from 'react';
 import { Observable, Observer } from 'rxjs';
-
-import ThumbDown from '@mui/icons-material/ThumbDown';
-import ThumbUp from '@mui/icons-material/ThumbUp';
-
-import './DateTimeInterest.css';
 import { NO_COUNT, RsvpCount } from '../aggregate';
 import { formatDate, formatTime } from '../dateTime';
+import './DateTimeInterest.css';
 import { InterestIndicator } from './InterestIndicator';
-
-import Debug from 'debug';
 
 const debug = Debug('rsvp:component:dateTime');
 
@@ -24,6 +22,7 @@ export type DateTimeInterestProps = {
   hhmm: string,
   yyyymmdd: string,
   duration: string,
+  getICal: Observer<number>,
   readRsvp: Observable<number>,
   rsvp: Observer<number>,
   rsvpCount: Observable<RsvpCount>,
@@ -94,6 +93,9 @@ export function DateTimeInterest(props: DateTimeInterestProps) {
     <Stack className="DateTimeDiv"
       direction="row"
       key={props.yyyymmdd + props.hhmm}>
+        <IconButton onClick={() => props.getICal.next(props.id)}>
+          <EventIcon/>
+        </IconButton>
       <Typography className="DateTimeText" 
         color="text.secondary"
         align="right"

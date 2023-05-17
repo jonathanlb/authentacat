@@ -43,6 +43,7 @@ export type EventCardProps = {
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
+  getICal: Observer<number>,
   interestResponse: Observable<Array<InterestResponse>>,
   rideShares: Observable<Array<RideShare>>,
   showAdmin?: boolean,
@@ -220,7 +221,7 @@ export function EventCard(props: EventCardProps) {
             }}
               key={`dt-choice-${i}`} >
               <Box sx={{ width: props.showAdmin ? '90%' : '100%' }}>
-                <DateTimeInterest {...dt} key={i} />
+                <DateTimeInterest {...dt} key={i} getICal={props.getICal} />
               </Box>
 
               {props.showAdmin

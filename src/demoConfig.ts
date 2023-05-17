@@ -276,6 +276,7 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
     return res;
   }
 
+  const getICal = new Subject<number>(); // XXX Wireup.
   const events: Array<EventCardProps> = [
     {
       editable: true,
@@ -290,6 +291,7 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
           hhmm: '16:15',
           yyyymmdd: '2022-05-13',
           duration: '60m',
+          getICal: getICal,
           readRsvp: new BehaviorSubject(0),
           rsvp: new BehaviorSubject(0),
           rsvpCount: new BehaviorSubject(summarizeResponses(interestResponses[0])),
@@ -299,11 +301,13 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
           hhmm: '15:15',
           yyyymmdd: '2022-05-14',
           duration: '60m',
+          getICal: getICal,
           readRsvp: new BehaviorSubject(0),
           rsvp: new BehaviorSubject(0),
           rsvpCount: new BehaviorSubject(summarizeResponses(interestResponses[1])),
         },
       ],
+      getICal: getICal,
       interestResponse: getInterestResponse(),
       rideShares: new BehaviorSubject(rideShares[0]),
     },
@@ -320,6 +324,7 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
           hhmm: '17:00',
           yyyymmdd: '2022-06-04',
           duration: '60m',
+          getICal: new Subject(), // XXX wire up
           readRsvp: new BehaviorSubject(-1),
           rsvp: new BehaviorSubject(-1),
           rsvpCount: new BehaviorSubject(summarizeResponses(interestResponses[2])),
@@ -329,11 +334,13 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
           hhmm: '18:00',
           yyyymmdd: '2022-06-05',
           duration: '60m',
+          getICal: getICal,
           readRsvp: new BehaviorSubject(-1),
           rsvp: new BehaviorSubject(-1),
           rsvpCount: new BehaviorSubject(summarizeResponses(interestResponses[3])),
         },
       ],
+      getICal: getICal,
       interestResponse: getInterestResponse(),
       rideShares: new BehaviorSubject(rideShares[1]),
     }

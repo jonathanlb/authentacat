@@ -38,6 +38,7 @@ export type ServerInterface = {
 export class ServerImpl extends RestClient {
   eventCards: BehaviorSubject<Array<EventCardProps>>;
   eventEditor: EventEditor;
+  getICal: Subject<number>;
   interestReporter: InterestReporter;
   listAllEvents: Observable<boolean>;
   rideShareReporter: RideShareReporter;
@@ -64,7 +65,41 @@ export class ServerImpl extends RestClient {
     this.rsvpReporter = new RsvpReporter(config);
     this.stopped = false;
     this.venues = new Map();
+
+    this.getICal = new Subject<number>();
+    this.getICal.subscribe(dtId => this.downloadICal(dtId)); // XXX clean up.
     debug('init');
+  }
+
+  /**
+   * Logic to download event calendar/ics files to embed into front-end
+   * widgets.
+   *
+   * @param dtId the dateTime id representing the timeslot and event to
+   * populate calendar event wiht.
+   */
+  private async downloadICal(dtId: number) {
+    const errf = (msg: string) => {
+      window.alert(`Cannot download ical event: ${msg}`);
+      return true;
+    }
+
+    const url = `${this.serverName}/event/ical/${dtId}`;
+    debug(url);
+    try {
+      const resp = await this.fetch(url);
+      if (resp.status !== 200) {
+        errf(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);
+      }
+      const handle = window.open('data:text/calendar;charset=utf8,' + encodeURIComponent(await resp.text()));
+      if (!handle) {
+        errf('Cannot save ical event data');
+      } else {
+        handle.onerror = errf as OnErrorEventHandler;
+      }
+    } catch (e) {
+      errf((e as any).message)
+    }
   }
 
   /**
@@ -73,10 +108,10 @@ export class ServerImpl extends RestClient {
   private async eventId2CardProp(eventId: number): Promise<EventCardProps> {
     const url = `${this.serverName}/event/get/${eventId}`;
     debug('eventId2CardProp', url);
-    const eventDesc = await this.fetchJson(url);  
+    const eventDesc = await this.fetchJson(url);
     debug('event description', eventDesc);
     const dts = this.getEventTally(
-      eventDesc.dateTime ? [ eventDesc.dateTime ] : eventDesc.dateTimes);
+      eventDesc.dateTime ? [eventDesc.dateTime] : eventDesc.dateTimes);
     const editable = eventDesc.editable;
     const eventCard = {
       editable: editable,
@@ -86,6 +121,7 @@ export class ServerImpl extends RestClient {
       name: eventDesc.name,
       venue: await this.getVenue(eventDesc.venue),
       dateTimes: dts,
+      getICal: this.getICal,
       interestResponse: this.rsvpCollector.getRsvps(eventId),
       rideShares: this.rideShareReporter.getRideShares(eventId),
     };
@@ -117,7 +153,7 @@ export class ServerImpl extends RestClient {
         readRsvp: this.rsvpReporter.getRsvp(dt.event, dt.id),
         rsvp: this.rsvpReporter.sendRsvp(dt.event, dt.id),
         rsvpCount: this.interestReporter.getDateTimeInterestCount(dt.event, dt.id),
-      };        
+      };
     }) as Array<DateTimeInterestProps>;
   }
 
@@ -167,7 +203,7 @@ export class ServerImpl extends RestClient {
         }
       }
     );
-    
+
     return () => listAllSub.unsubscribe();
   }
 }
