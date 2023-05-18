@@ -148,7 +148,7 @@ export function EventCard(props: EventCardProps) {
         </AccordionSummary>
 
         <AccordionDetails className='EventDetails'>
-          {props.editable && editing ?
+          {!props.editable || editing ?
             null :
             <Tooltip title='Edit markdown event description'>
               <IconButton sx={{ position: 'absolute' }}
