@@ -16,10 +16,14 @@ reports on which users plan to attend or not, as well as sectional interest.
 
 ![Sample attendance report](docs/attendance-summary.png)
 
-Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) include
+Updates from the [initial version](https://github.com/jonathanlb/cat-wrangler) include:
 
+- Administrator event editing from the web.
+- [ical/ics](https://icalendar.org) event downloading.
+- Textual event filtering.
+- Filter events by upcoming.
+- Rideshare board.
 - Using [MUI Core web components](https://mui.com/), instead of home-rolled ones built on [yo-yo](https://github.com/maxogden/yo-yo).  The resulting product renders more consistently on smaller screens and conforms to wider usability and accessibility standards.
-- Additional tools for users to filter events.
 - Using TypeScript.
 
 ## Deployment
