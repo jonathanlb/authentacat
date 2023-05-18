@@ -24,7 +24,6 @@ export function handleErrorSignOut(
   return config.start(
     (err: any) => errorSignOut(signOut, err)
     ).catch((err) => {
-      errorSignOut(signOut, err)
       return () => errors('cannot start server interface', err);
     });
 }

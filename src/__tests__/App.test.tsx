@@ -1,4 +1,6 @@
+import { Subject } from 'rxjs';
 import { handleErrorSignOut } from '../App.util';
+import { EventCardProps } from '../components/EventCard';
 
 test('signs out on runtime error', async () => {
   let alerted = false;
@@ -7,6 +9,9 @@ test('signs out on runtime error', async () => {
   }
 
   const config = {
+    eventCards: new Subject<Array<EventCardProps>>(),
+    listAllEvents: new Subject<boolean>(),
+    logout: () => { },
     start: (stopOnError: (err: any) => void) => {
       stopOnError(new Error('simulating error'));
       return Promise.resolve(() => {});
@@ -24,26 +29,3 @@ test('signs out on runtime error', async () => {
   f();
 });
 
-test('signs out on cleanup error', async () => {
-  let alerted = false;
-  let signedOut = false;
-
-  global.alert = (msg: string) => {
-    alerted = true;
-  }
-
-  const config = {
-    start: (stopOnError: (err: any) => void) => {
-      return Promise.reject(new Error('unsubscribe error'));
-    },
-  };
-
-  const signOut = () => {
-    signedOut = true;
-  }
-
-  const f = await handleErrorSignOut(config, signOut);
-  f();
-  expect(alerted).toBe(true);
-  expect(signedOut).toBe(true);
-});

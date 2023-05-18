@@ -46,9 +46,7 @@ export function EventContent(props: EventContentProps) {
     let irSub: Array<Subscription> = [];
     const irCardSub = props.eventCards.pipe(take(2)).subscribe((eventCards) => {
       irSub = eventCards.map(ec => ec.interestResponse.pipe(take(2)).subscribe(irs => {
-        if (irs.length > 0) {
-          setShowRsvpDetails(true);
-        }
+        setShowRsvpDetails(irs.length > 0);
       }));
     });
 
@@ -61,6 +59,7 @@ export function EventContent(props: EventContentProps) {
       irCardSub.unsubscribe();
       irSub.forEach(s => s.unsubscribe());
       latestSub.unsubscribe();
+      setShowRsvpDetails(false);
     }
   }, [ props.eventCards, props.filter, props.latestEventFirst ]);
 

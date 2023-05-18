@@ -40,6 +40,11 @@ function App(props: AppProps) {
   });
 
   function createContent(userName: string, signOut?: (data?: AuthEventData | undefined) => void) {
+    const signOutWrapper = async (data?: AuthEventData | undefined) => {
+      signOut && signOut(data);
+      props.config.logout();
+    }
+
     return (
       <ThemeProvider theme={theme}>
         <Card className="App">
@@ -49,7 +54,7 @@ function App(props: AppProps) {
             listAllEvents={props.listAllEvents}
             logoImageSrc='logo.png'
             logoImageSrcAlt={config.logoAltTxt}
-            signOut={signOut}
+            signOut={signOutWrapper}
             userName={userName} />
           <EventContent
             eventCards={props.config.eventCards}

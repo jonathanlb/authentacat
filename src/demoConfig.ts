@@ -373,6 +373,8 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
     eventCards,
     listAllEvents,
     passwordless: config.passwordless,
+    logout: () => {
+    },
     start: (stopOnError: (err: any) => void) => {
       try {
         debug('start');

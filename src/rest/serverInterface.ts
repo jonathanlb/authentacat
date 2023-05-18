@@ -28,6 +28,7 @@ export type ServerInterface = {
   eventCards: Observable<Array<EventCardProps>>;
   listAllEvents: Observable<boolean>;
 
+  logout: () => void;
   start: (stopOnError: (err: any) => void) => Promise<() => void>; // return a cleanup function
   passwordless?: boolean; // for demo config only
 };
@@ -172,17 +173,34 @@ export class ServerImpl extends RestClient {
     return this.venues.get(venueId) as Promise<VenueCardProps>;
   }
 
-  async start(stopOnError: (err: any) => void): Promise<() => void> {
-    this.stopped = false;
-    const session = await Auth.currentSession();
-    this.accessToken = session.getIdToken().getJwtToken();
+  /**
+   * Clear out all state data.
+   */
+  async logout() {
+    // The user attributes get cleared here, but for some reason the
+    // session erroneously preserves the id token for the next user.
+    await Auth.signOut();
+    
+    // The timing of this is tricky.
+    // We must wait until Auth.signOut() completes,
+    // else the session is sticky upon reload.
+    window.location.reload();
+  }
+
+  private setAccessToken(accessToken: string) {
+    this.accessToken = accessToken;
     this.eventEditor.accessToken = this.accessToken;
     this.interestReporter.accessToken = this.accessToken;
     this.rideShareReporter.accessToken = this.accessToken;
     this.rsvpCollector.accessToken = this.accessToken;
     this.rsvpReporter.accessToken = this.accessToken;
     this.userDirectory.accessToken = this.accessToken;
+  }
 
+  async start(stopOnError: (err: any) => void): Promise<() => void> {
+    this.stopped = false;
+    const session = await Auth.currentSession();
+    this.setAccessToken(session.getIdToken().getJwtToken());
     const listAllSub = this.listAllEvents.subscribe(
       async (listAllEvents: boolean) => {
         try {
@@ -197,7 +215,7 @@ export class ServerImpl extends RestClient {
           listAllSub.unsubscribe();
           // try to limit alerting user... still alerts x2...
           if (!this.stopped) {
-            this.stopped = true;
+            this.logout();
             stopOnError(err);
           }
         }
