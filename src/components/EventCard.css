@@ -5,6 +5,21 @@
   top: 0px;
 }
 
+.Editor {
+  display: flex;
+  width: 100%;
+  padding-bottom: 1rem;
+}
+
+.EditorControls {
+  display: flex;
+  flex-direction: column;
+}
+
+.EditorText {
+  width: 100%;
+}
+
 .EventCard {
   border-color: grey;
   border-style: solid;

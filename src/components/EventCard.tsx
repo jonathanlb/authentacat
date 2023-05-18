@@ -1,5 +1,8 @@
-import React, { useEffect, useState } from 'react';
-
+import AirportShuttle from '@mui/icons-material/AirportShuttle';
+import Cancel from '@mui/icons-material/Cancel';
+import Edit from '@mui/icons-material/Edit';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Save from '@mui/icons-material/Save';
 import Accordion from '@mui/material/Accordion';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -8,28 +11,21 @@ import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
 import IconButton from '@mui/material/IconButton';
 import Popover from '@mui/material/Popover';
-import ReactMarkdown from 'react-markdown';
 import TextField from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-
-import AirportShuttle from '@mui/icons-material/AirportShuttle';
-import Edit from '@mui/icons-material/Edit';
-import ExpandMore from '@mui/icons-material/ExpandMore';
-import Save from '@mui/icons-material/Save';
-
+import Debug from 'debug';
+import React, { useEffect, useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 import { BehaviorSubject, Observable, Observer, Subject, Subscription } from 'rxjs';
-
-import './EventCard.css';
 import { InterestResponse } from '../aggregate';
 import { formatDate, formatTime, isUndecided } from '../dateTime';
-import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
-import { InterestReport } from './InterestReport';
 import { RideShare } from '../rideShare';
+import { DateTimeInterest, DateTimeInterestProps } from './DateTimeInterest';
+import './EventCard.css';
+import { InterestReport } from './InterestReport';
 import { RideShareCard } from './RideShareCard';
 import { VenueCard, VenueCardProps } from './VenueCard';
-
-import Debug from 'debug';
 
 const debug = Debug('rsvp:component:eventCard');
 
@@ -106,7 +102,7 @@ export function EventCard(props: EventCardProps) {
   }, [props.dateTimes, irSub, setUndecided]);
 
   function handleEditClick() {
-    setEditing(true);
+    setEditing(!editing);
   }
 
   function handleHideInterestReport() {
@@ -161,16 +157,25 @@ export function EventCard(props: EventCardProps) {
           }
 
           {props.editable && editing ?
-            <Box sx={{ width: '100%' }}>
-              <TextField id='eventEditor' multiline={true} defaultValue={descriptionMd} sx={{ width: '80%' }} />
-              <Tooltip title='Save markdown event description'>
-                <IconButton
-                  className='EditEventButton'
-                  onClick={handleSaveClick}
-                >
-                  <Save />
-                </IconButton>
-              </Tooltip>
+            <Box className='Editor'>
+              <TextField id='eventEditor' 
+                className='EditorText'
+                multiline={true}
+                defaultValue={descriptionMd} />
+              
+              <Box className='EditorControls'>
+                <Tooltip title='Discard edits'>
+                  <IconButton onClick={handleEditClick} >
+                    <Cancel />
+                  </IconButton>
+                </Tooltip>
+
+                <Tooltip title='Save markdown event description'>
+                  <IconButton onClick={handleSaveClick} >
+                    <Save />
+                  </IconButton>
+                </Tooltip>
+              </Box>
             </Box> :
             <ReactMarkdown className='EventDescriptionDiv'>
               {descriptionMd}
