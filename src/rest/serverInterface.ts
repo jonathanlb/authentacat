@@ -92,12 +92,11 @@ export class ServerImpl extends RestClient {
       if (resp.status !== 200) {
         errf(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);
       }
-      const handle = window.open('data:text/calendar;charset=utf8,' + encodeURIComponent(await resp.text()));
-      if (!handle) {
-        errf('Cannot save ical event data');
-      } else {
-        handle.onerror = errf as OnErrorEventHandler;
-      }
+
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/calendar;charset=utf-8,' + encodeURIComponent(await resp.text()));
+      element.setAttribute('download', 'rsvp.ics');
+      element.click();
     } catch (e) {
       errf((e as any).message)
     }
