@@ -9,6 +9,8 @@ import Debug from 'debug';
 
 const debug = Debug('rsvp:control:demo');
 
+const DEFAULT_ICAL = ''; // XXX fill in
+
 export type DemoConfig = {
   passwordless?: boolean;
 };
@@ -276,7 +278,7 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
     return res;
   }
 
-  const getICal = new Subject<number>(); // XXX Wireup.
+  const getICal = async (_: number) => DEFAULT_ICAL;
   const events: Array<EventCardProps> = [
     {
       editable: true,
@@ -324,7 +326,7 @@ export function newDemoConfig(config: DemoConfig): ServerInterface {
           hhmm: '17:00',
           yyyymmdd: '2022-06-04',
           duration: '60m',
-          getICal: new Subject(), // XXX wire up
+          getICal: getICal,
           readRsvp: new BehaviorSubject(-1),
           rsvp: new BehaviorSubject(-1),
           rsvpCount: new BehaviorSubject(summarizeResponses(interestResponses[2])),

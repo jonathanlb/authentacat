@@ -39,7 +39,6 @@ export type ServerInterface = {
 export class ServerImpl extends RestClient {
   eventCards: BehaviorSubject<Array<EventCardProps>>;
   eventEditor: EventEditor;
-  getICal: Subject<number>;
   interestReporter: InterestReporter;
   listAllEvents: Observable<boolean>;
   rideShareReporter: RideShareReporter;
@@ -67,8 +66,6 @@ export class ServerImpl extends RestClient {
     this.stopped = false;
     this.venues = new Map();
 
-    this.getICal = new Subject<number>();
-    this.getICal.subscribe(dtId => this.downloadICal(dtId)); // XXX clean up.
     debug('init');
   }
 
@@ -79,27 +76,15 @@ export class ServerImpl extends RestClient {
    * @param dtId the dateTime id representing the timeslot and event to
    * populate calendar event wiht.
    */
-  private async downloadICal(dtId: number) {
-    const errf = (msg: string) => {
-      window.alert(`Cannot download ical event: ${msg}`);
-      return true;
-    }
-
+  private async getICal(dtId: number): Promise<string> {
     const url = `${this.serverName}/event/ical/${dtId}`;
     debug(url);
-    try {
-      const resp = await this.fetch(url);
-      if (resp.status !== 200) {
-        errf(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);
-      }
-
-      const element = document.createElement('a');
-      element.setAttribute('href', 'data:text/calendar;charset=utf-8,' + encodeURIComponent(await resp.text()));
-      element.setAttribute('download', 'rsvp.ics');
-      element.click();
-    } catch (e) {
-      errf((e as any).message)
+    const resp = await this.fetch(url);
+    if (resp.status !== 200) {
+      throw new Error(`Cannot access ${url}: ${resp.status} "${resp.statusText}"`);
     }
+
+    return resp.text();
   }
 
   /**
@@ -121,7 +106,7 @@ export class ServerImpl extends RestClient {
       name: eventDesc.name,
       venue: await this.getVenue(eventDesc.venue),
       dateTimes: dts,
-      getICal: this.getICal,
+      getICal: this.getICal.bind(this),
       interestResponse: this.rsvpCollector.getRsvps(eventId),
       rideShares: this.rideShareReporter.getRideShares(eventId),
     };

@@ -39,7 +39,7 @@ export type EventCardProps = {
   name: string,
   venue: VenueCardProps,
   dateTimes: Array<DateTimeInterestProps>,
-  getICal: Observer<number>,
+  getICal: (dtId: number) => Promise<string>,
   interestResponse: Observable<Array<InterestResponse>>,
   rideShares: Observable<Array<RideShare>>,
   showAdmin?: boolean,
