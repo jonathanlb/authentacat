@@ -1,4 +1,4 @@
-import { Auth } from '@aws-amplify/auth';
+import { signOut, fetchAuthSession } from '@aws-amplify/auth';
 
 import Debug from 'debug';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
@@ -163,7 +163,7 @@ export class ServerImpl extends RestClient {
   async logout() {
     // The user attributes get cleared here, but for some reason the
     // session erroneously preserves the id token for the next user.
-    await Auth.signOut();
+    await signOut();
     
     // The timing of this is tricky.
     // We must wait until Auth.signOut() completes,
@@ -183,8 +183,12 @@ export class ServerImpl extends RestClient {
 
   async start(stopOnError: (err: any) => void): Promise<() => void> {
     this.stopped = false;
-    const session = await Auth.currentSession();
-    this.setAccessToken(session.getIdToken().getJwtToken());
+    const session = await fetchAuthSession();
+    const accessToken = session.tokens?.idToken?.toString() || 'null';
+    if (accessToken === 'null') {
+      errors('cognito returned null access token, session: ', session);
+    }
+    this.setAccessToken(accessToken);
     const listAllSub = this.listAllEvents.subscribe(
       async (listAllEvents: boolean) => {
         try {

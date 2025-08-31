@@ -85,12 +85,14 @@ function App(props: AppProps) {
         });
       }
     }
+
     return (
       <Box className='LoginBox'>
         <Authenticator components={authComps} hideSignUp >
           {({ signOut, user }) => {
             unsub = handleErrorSignOut(props.config, signOut as () => void);
-            const userName = user?.attributes?.name || '???';
+            // Amplify refactor moved user name attribute to asynchronous access via auth.fetchUserAttributes
+            const userName = user?.signInDetails?.loginId || '';
             return createContent(userName, signOut);
           }}
         </Authenticator>
