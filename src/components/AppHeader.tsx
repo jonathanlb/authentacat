@@ -92,7 +92,7 @@ export function AppHeader(props: AppHeaderProps) {
     <Box className="AppHeader">
       { headerImage(props) }
       <Typography className="UserNameNotice">
-        Welcome, {props.userName}
+        Logged in as: {props.userName}
       </Typography>
 
       <Tooltip title="Filter events">

@@ -17,7 +17,7 @@ test('app header renders', () => {
   };
 
   render(<AppHeader {...props}/>);
-  const nameElt = screen.getByText(new RegExp(`.*Welcome, ${props.userName}.*`));
+  const nameElt = screen.getByText(new RegExp(`.*Logged in as: ${props.userName}.*`));
   expect(nameElt).toBeInTheDocument();
 });
 
