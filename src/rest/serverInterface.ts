@@ -1,4 +1,4 @@
-import { signOut, fetchAuthSession } from '@aws-amplify/auth';
+import { signOut, fetchAuthSession } from 'aws-amplify/auth';
 
 import Debug from 'debug';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
